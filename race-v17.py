@@ -435,7 +435,7 @@ with tab2:
             width=1000,
             xaxis_title="Driver",
             yaxis_title="Points",
-            legend_title="Team",
+            legend_title="Driver",
             bargap=0.2,  # Gap between bars
             font=dict(size=12),
             title="Driver Points in Descending Order",
