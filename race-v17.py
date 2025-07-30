@@ -435,7 +435,7 @@ with tab2:
             text="Points",
             color_discrete_map={row["Driver"]: row["Color"] for _, row in team_driver_df.iterrows()}
         )
-        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}")
+        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)
         fig.update_layout(
             height=600,
             width=900,
