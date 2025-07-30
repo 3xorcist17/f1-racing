@@ -422,40 +422,83 @@ with tab2:
     if driver_chart_data:
         driver_df_chart = pd.DataFrame(driver_chart_data)
         
+        # Ensure all teams have both drivers (fill missing with 0 points)
+        complete_chart_data = []
+        for team in teams_drivers.keys():
+            driver1, driver2 = teams_drivers[team]
+            
+            # Get points for driver1
+            driver1_data = driver_df_chart[driver_df_chart['Driver'] == driver1]
+            if not driver1_data.empty:
+                points1 = driver1_data.iloc[0]['Points']
+            else:
+                points1 = 0
+                
+            # Get points for driver2
+            driver2_data = driver_df_chart[driver_df_chart['Driver'] == driver2]
+            if not driver2_data.empty:
+                points2 = driver2_data.iloc[0]['Points']
+            else:
+                points2 = 0
+            
+            # Only include teams where at least one driver has points
+            if points1 > 0 or points2 > 0:
+                complete_chart_data.append({
+                    "Team": team,
+                    "Driver": driver1,
+                    "Points": points1,
+                    "Color": driver_colors[driver1]
+                })
+                complete_chart_data.append({
+                    "Team": team,
+                    "Driver": driver2,
+                    "Points": points2,
+                    "Color": driver_colors[driver2]
+                })
+        
+        complete_df = pd.DataFrame(complete_chart_data)
+        
         # Create grouped bar chart by team
         fig = px.bar(
-            driver_df_chart,
+            complete_df,
             x="Team",
             y="Points",
             color="Driver",
             title="Driver Points by Team",
             labels={"Points": "Points", "Team": "Team"},
-            text="Points",
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in complete_df.iterrows()}
         )
         
-        # Update layout and text
+        # Update layout for better visibility
         fig.update_layout(
-            height=500,
+            height=600,
+            width=1000,
             xaxis_title="Team",
             yaxis_title="Points",
             legend_title="Driver",
-            barmode="group"
+            barmode="group",
+            bargap=0.3,  # Gap between team groups
+            bargroupgap=0.1,  # Gap between bars within a group
+            font=dict(size=12),
+            title_font_size=16
         )
         
-        # Add driver name labels on bars
-        for i, trace in enumerate(fig.data):
+        # Add driver name and points labels on bars
+        for trace in fig.data:
             driver_name = trace.name
             custom_text = []
-            for j, value in enumerate(trace.y):
+            for value in trace.y:
                 if value > 0:
-                    custom_text.append(f"{driver_name}<br>{value}")
+                    custom_text.append(f"{driver_name}<br>{int(value)}")
                 else:
                     custom_text.append("")
             
             trace.text = custom_text
             trace.textposition = "outside"
-            trace.textfont = dict(size=10, color="black")
+            trace.textfont = dict(size=11, color="black")
+        
+        # Update bar width
+        fig.update_traces(width=0.4)
         
         st.plotly_chart(fig, use_container_width=True)
     else:
