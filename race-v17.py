@@ -385,7 +385,6 @@ with tab1:
             st.write("No races completed yet.")
 
 # Tab 2: Drivers' Championship Standings and Chart
-# Tab 2: Drivers' Championship Standings and Chart
 with tab2:
     st.subheader("🏆 Drivers' Championship Standings")
     st.write(f"**Races Completed: {st.session_state.races_completed}**")
@@ -418,8 +417,8 @@ with tab2:
     if driver_chart_data:
         driver_df_chart = pd.DataFrame(driver_chart_data)
         # Debug: Display the DataFrame to verify structure
-        st.write("Debug: DataFrame for Bar Chart")
-        st.dataframe(driver_df_chart, use_container_width=True, hide_index=True)
+        #st.write("Debug: DataFrame for Bar Chart")
+        #st.dataframe(driver_df_chart, use_container_width=True, hide_index=True)
 
         # Create bar chart sorted by points in descending order
         fig = px.bar(
