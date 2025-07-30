@@ -467,7 +467,7 @@ with tab2:
             title="Driver Points by Team",
             labels={"Points": "Points", "Team": "Team"},
             color_discrete_map={row["Driver"]: row["Color"] for _, row in complete_df.iterrows()},
-            barmode="group"
+            #barmode="group"
         )
         
         # Update layout for better visibility
