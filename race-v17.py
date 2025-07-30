@@ -479,7 +479,7 @@ with tab2:
             legend_title="Driver",
             #barmode="group",
             bargap=0.2,  # Gap between team groups
-            bargroupgap=0.05,  # Small gap between bars within a group
+            bargroupgap=0.1,  # Small gap between bars within a group
             font=dict(size=12),
             title_font_size=16
         )
