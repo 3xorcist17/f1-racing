@@ -466,7 +466,8 @@ with tab2:
             color="Driver",
             title="Driver Points by Team",
             labels={"Points": "Points", "Team": "Team"},
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in complete_df.iterrows()}
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in complete_df.iterrows()},
+            barmode="group"
         )
         
         # Update layout for better visibility
@@ -477,8 +478,8 @@ with tab2:
             yaxis_title="Points",
             legend_title="Driver",
             barmode="group",
-            bargap=0.3,  # Gap between team groups
-            bargroupgap=0.1,  # Gap between bars within a group
+            bargap=0.2,  # Gap between team groups
+            bargroupgap=0.05,  # Small gap between bars within a group
             font=dict(size=12),
             title_font_size=16
         )
