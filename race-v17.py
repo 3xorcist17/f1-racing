@@ -477,7 +477,7 @@ with tab2:
             xaxis_title="Team",
             yaxis_title="Points",
             legend_title="Driver",
-            #barmode="group",
+            barmode="group",
             bargap=0.2,  # Gap between team groups
             bargroupgap=0.1,  # Small gap between bars within a group
             font=dict(size=12),
