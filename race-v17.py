@@ -385,6 +385,7 @@ with tab1:
             st.write("No races completed yet.")
 
 # Tab 2: Drivers' Championship Standings and Chart
+# Tab 2: Drivers' Championship Standings and Chart
 with tab2:
     st.subheader("🏆 Drivers' Championship Standings")
     st.write(f"**Races Completed: {st.session_state.races_completed}**")
@@ -408,37 +409,52 @@ with tab2:
     st.dataframe(driver_df, use_container_width=True, hide_index=True)
 
     st.markdown("### Drivers' Points Distribution")
-    # Prepare data for bar chart sorted by points
-    driver_chart_data = []
-    for driver, points in sorted_driver_standings:
-        team = next(d['team'] for d in drivers if d['driver'] == driver)
-        driver_chart_data.append({"Driver": driver, "Team": team, "Points": points, "Color": driver_colors[driver]})
+    # Prepare data for grouped bar chart, sorted by team and points within team
+    team_driver_data = []
+    for team in teams_drivers.keys():
+        driver1, driver2 = teams_drivers[team]
+        driver1_points = st.session_state.total_driver_points.get(driver1, 0)
+        driver2_points = st.session_state.total_driver_points.get(driver2, 0)
+        # Sort drivers within team by points (highest first)
+        drivers_data = sorted([
+            {"Driver": driver1, "Points": driver1_points, "Color": driver_colors[driver1]},
+            {"Driver": driver2, "Points": driver2_points, "Color": driver_colors[driver2]}
+        ], key=lambda x: x["Points"], reverse=True)
+        for driver_data in drivers_data:
+            team_driver_data.append({"Team": team, "Driver": driver_data["Driver"], "Points": driver_data["Points"], "Color": driver_data["Color"]})
 
-    if driver_chart_data:
-        driver_df_chart = pd.DataFrame(driver_chart_data)
+    if team_driver_data:
+        team_driver_df = pd.DataFrame(team_driver_data)
+        # Sort teams by total points of their drivers (sum of both)
+        team_points = {team: sum(d["Points"] for d in [d for d in team_driver_data if d["Team"] == team]) for team in teams_drivers}
+        team_driver_df['TeamOrder'] = team_driver_df['Team'].map(lambda x: team_points[x])
+        team_driver_df = team_driver_df.sort_values(by=['TeamOrder', 'Points'], ascending=[False, False]).drop(columns=['TeamOrder'])
+
         # Debug: Display the DataFrame to verify structure
         st.write("Debug: DataFrame for Bar Chart")
-        st.dataframe(driver_df_chart, use_container_width=True, hide_index=True)
+        st.dataframe(team_driver_df, use_container_width=True, hide_index=True)
 
-        # Create bar chart sorted by points in descending order
+        # Create grouped bar chart with team grouping and driver colors
         fig = px.bar(
-            driver_df_chart,
-            x="Driver",
+            team_driver_df,
+            x="Team",
             y="Points",
             color="Driver",
+            barmode="group",
             text="Points",
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in team_driver_df.iterrows()}
         )
         fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)  # Maintain wide bars
         fig.update_layout(
             height=600,
             width=1000,
-            xaxis_title="Driver",
+            xaxis_title="Team",
             yaxis_title="Points",
             legend_title="Driver",
-            bargap=0.2,  # Gap between bars
+            bargap=0.2,  # Gap between team groups
+            bargroupgap=0.1,  # Gap between driver bars within team
             font=dict(size=12),
-            title="Driver Points in Descending Order",
+            title="Driver Points by Team",
             title_font_size=16
         )
         st.plotly_chart(fig, use_container_width=True)
