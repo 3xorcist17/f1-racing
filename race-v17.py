@@ -409,44 +409,37 @@ with tab2:
     st.dataframe(driver_df, use_container_width=True, hide_index=True)
 
     st.markdown("### Drivers' Points Distribution")
-    # Prepare data for grouped bar chart
-    team_driver_data = []
-    for team in teams_drivers.keys():
-        driver1, driver2 = teams_drivers[team]
-        driver1_points = st.session_state.total_driver_points.get(driver1, 0)
-        driver2_points = st.session_state.total_driver_points.get(driver2, 0)
-        if driver1_points > 0 or driver2_points > 0:
-            team_driver_data.append({"Team": team, "Driver": driver1, "Points": driver1_points, "Color": driver_colors[driver1]})
-            team_driver_data.append({"Team": team, "Driver": driver2, "Points": driver2_points, "Color": driver_colors[driver2]})
+    # Prepare data for bar chart sorted by points
+    driver_chart_data = []
+    for driver, points in sorted_driver_standings:
+        team = next(d['team'] for d in drivers if d['driver'] == driver)
+        driver_chart_data.append({"Driver": driver, "Team": team, "Points": points, "Color": driver_colors[driver]})
 
-    if team_driver_data:
-        team_driver_df = pd.DataFrame(team_driver_data)
+    if driver_chart_data:
+        driver_df_chart = pd.DataFrame(driver_chart_data)
         # Debug: Display the DataFrame to verify structure
         st.write("Debug: DataFrame for Bar Chart")
-        st.dataframe(team_driver_df, use_container_width=True, hide_index=True)
+        st.dataframe(driver_df_chart, use_container_width=True, hide_index=True)
 
-        # Create grouped bar chart with explicit long-form data
+        # Create bar chart sorted by points in descending order
         fig = px.bar(
-            team_driver_df,
-            x="Team",
+            driver_df_chart,
+            x="Driver",
             y="Points",
-            color="Driver",
-            barmode="group",
+            color="Team",
             text="Points",
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in team_driver_df.iterrows()}
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
         )
-        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)
+        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)  # Maintain wide bars
         fig.update_layout(
             height=600,
-            width=900,
-            xaxis_title="Team",
+            width=1000,
+            xaxis_title="Driver",
             yaxis_title="Points",
-            legend_title="Driver",
-            barmode="group",
-            bargap=0.2,  # Increased gap between groups
-            bargroupgap=0.05,  # Gap between bars within a group
+            legend_title="Team",
+            bargap=0.2,  # Gap between bars
             font=dict(size=12),
-            title="Driver Points by Team",
+            title="Driver Points in Descending Order",
             title_font_size=16
         )
         st.plotly_chart(fig, use_container_width=True)
