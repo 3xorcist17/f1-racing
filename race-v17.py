@@ -385,7 +385,6 @@ with tab1:
             st.write("No races completed yet.")
 
 # Tab 2: Drivers' Championship Standings and Chart
-# Tab 2: Drivers' Championship Standings and Chart
 with tab2:
     st.subheader("🏆 Drivers' Championship Standings")
     st.write(f"**Races Completed: {st.session_state.races_completed}**")
@@ -426,7 +425,7 @@ with tab2:
             driver_df_chart,
             x="Driver",
             y="Points",
-            color="Team",
+            color="Driver",
             text="Points",
             color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
         )
@@ -436,7 +435,7 @@ with tab2:
             width=1000,
             xaxis_title="Driver",
             yaxis_title="Points",
-            legend_title="Team",
+            legend_title="Driver",
             bargap=0.2,  # Gap between bars
             font=dict(size=12),
             title="Driver Points in Descending Order",
