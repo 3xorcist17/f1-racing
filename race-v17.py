@@ -408,24 +408,55 @@ with tab2:
     st.dataframe(driver_df, use_container_width=True, hide_index=True)
 
     st.markdown("### Drivers' Points Distribution")
-    driver_chart_data = [
-        {"value": points, "name": f"{driver} ({next(d['team'] for d in drivers if d['driver'] == driver)})", "itemStyle": {"color": driver_colors[driver]}}
-        for driver, points in sorted_driver_standings if points > 0
-    ]
+    driver_chart_data = []
+    for driver, points in sorted_driver_standings:
+        if points > 0:
+            team = next(d['team'] for d in drivers if d['driver'] == driver)
+            driver_chart_data.append({
+                "Driver": driver,
+                "Team": team,
+                "Points": points,
+                "Color": driver_colors[driver]
+            })
+    
     if driver_chart_data:
-        driver_df_chart = pd.DataFrame([
-            {"Driver": item["name"], "Points": item["value"], "Color": item["itemStyle"]["color"]}
-            for item in driver_chart_data
-        ])
-        fig = px.pie(
+        driver_df_chart = pd.DataFrame(driver_chart_data)
+        
+        # Create grouped bar chart by team
+        fig = px.bar(
             driver_df_chart,
-            values="Points",
-            names="Driver",
+            x="Team",
+            y="Points",
             color="Driver",
+            title="Driver Points by Team",
+            labels={"Points": "Points", "Team": "Team"},
+            text="Points",
             color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
         )
-        fig.update_traces(textposition="outside", textinfo="label+value")
-        fig.update_layout(height=600, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
+        
+        # Update layout and text
+        fig.update_layout(
+            height=500,
+            xaxis_title="Team",
+            yaxis_title="Points",
+            legend_title="Driver",
+            barmode="group"
+        )
+        
+        # Add driver name labels on bars
+        for i, trace in enumerate(fig.data):
+            driver_name = trace.name
+            custom_text = []
+            for j, value in enumerate(trace.y):
+                if value > 0:
+                    custom_text.append(f"{driver_name}<br>{value}")
+                else:
+                    custom_text.append("")
+            
+            trace.text = custom_text
+            trace.textposition = "outside"
+            trace.textfont = dict(size=10, color="black")
+        
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.write("No points data available yet. Please complete a race in the 'Race & Results' tab.")
@@ -501,29 +532,31 @@ with tab3:
                 text_auto=True
             )
             
-            # Update colors to match driver colors
-            colors = []
-            for team in contrib_df["Team"]:
-                driver1, driver2 = teams_drivers[team]
-                colors.extend([driver_colors[driver1], driver_colors[driver2]])
-            
-            # Apply colors to traces
+            # Update colors and add driver name labels
             for i, trace in enumerate(fig_bar.data):
-                team_idx = i // 2 if len(fig_bar.data) > len(contrib_df) else i
-                driver_idx = i % 2
-                team = contrib_df.iloc[team_idx]["Team"]
-                driver = teams_drivers[team][driver_idx]
-                trace.marker.color = driver_colors[driver]
-                trace.name = driver
+                driver_name = trace.name
+                trace.marker.color = driver_colors[driver_name]
+                
+                # Create custom text labels showing driver name and points
+                custom_text = []
+                for j, value in enumerate(trace.y):
+                    if value > 0:  # Only show label if driver has points
+                        custom_text.append(f"{driver_name}<br>{value}")
+                    else:
+                        custom_text.append("")
+                
+                trace.text = custom_text
+                trace.textposition = "inside"
+                trace.textfont = dict(size=10, color="white")
             
             fig_bar.update_layout(
                 height=500,
                 xaxis_title="Team",
                 yaxis_title="Points",
                 legend_title="Driver",
-                barmode="stack"
+                barmode="stack",
+                showlegend=True
             )
-            fig_bar.update_traces(textposition="inside", textfont_size=10)
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             st.write("No team contribution data available yet.")
