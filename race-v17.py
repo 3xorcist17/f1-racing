@@ -409,52 +409,37 @@ with tab2:
     st.dataframe(driver_df, use_container_width=True, hide_index=True)
 
     st.markdown("### Drivers' Points Distribution")
-    # Prepare data for grouped bar chart, sorted by team and points within team
-    team_driver_data = []
-    for team in teams_drivers.keys():
-        driver1, driver2 = teams_drivers[team]
-        driver1_points = st.session_state.total_driver_points.get(driver1, 0)
-        driver2_points = st.session_state.total_driver_points.get(driver2, 0)
-        # Sort drivers within team by points (highest first)
-        drivers_data = sorted([
-            {"Driver": driver1, "Points": driver1_points, "Color": driver_colors[driver1]},
-            {"Driver": driver2, "Points": driver2_points, "Color": driver_colors[driver2]}
-        ], key=lambda x: x["Points"], reverse=True)
-        for driver_data in drivers_data:
-            team_driver_data.append({"Team": team, "Driver": driver_data["Driver"], "Points": driver_data["Points"], "Color": driver_data["Color"]})
+    # Prepare data for bar chart sorted by points
+    driver_chart_data = []
+    for driver, points in sorted_driver_standings:
+        team = next(d['team'] for d in drivers if d['driver'] == driver)
+        driver_chart_data.append({"Driver": driver, "Team": team, "Points": points, "Color": driver_colors[driver]})
 
-    if team_driver_data:
-        team_driver_df = pd.DataFrame(team_driver_data)
-        # Sort teams by total points of their drivers (sum of both)
-        team_points = {team: sum(d["Points"] for d in [d for d in team_driver_data if d["Team"] == team]) for team in teams_drivers}
-        team_driver_df['TeamOrder'] = team_driver_df['Team'].map(lambda x: team_points[x])
-        team_driver_df = team_driver_df.sort_values(by=['TeamOrder', 'Points'], ascending=[False, False]).drop(columns=['TeamOrder'])
-
+    if driver_chart_data:
+        driver_df_chart = pd.DataFrame(driver_chart_data)
         # Debug: Display the DataFrame to verify structure
         st.write("Debug: DataFrame for Bar Chart")
-        st.dataframe(team_driver_df, use_container_width=True, hide_index=True)
+        st.dataframe(driver_df_chart, use_container_width=True, hide_index=True)
 
-        # Create grouped bar chart with team grouping and driver colors
+        # Create bar chart sorted by points in descending order
         fig = px.bar(
-            team_driver_df,
-            x="Team",
+            driver_df_chart,
+            x="Driver",
             y="Points",
             color="Driver",
-            barmode="group",
             text="Points",
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in team_driver_df.iterrows()}
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
         )
         fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)  # Maintain wide bars
         fig.update_layout(
             height=600,
             width=1000,
-            xaxis_title="Team",
+            xaxis_title="Driver",
             yaxis_title="Points",
             legend_title="Driver",
-            bargap=0.2,  # Gap between team groups
-            bargroupgap=0.1,  # Gap between driver bars within team
+            bargap=0.2,  # Gap between bars
             font=dict(size=12),
-            title="Driver Points by Team",
+            title="Driver Points in Descending Order",
             title_font_size=16
         )
         st.plotly_chart(fig, use_container_width=True)
