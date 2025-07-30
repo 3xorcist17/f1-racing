@@ -438,13 +438,13 @@ with tab2:
         fig.update_traces(textposition="outside", texttemplate="%{text:.0f}")
         fig.update_layout(
             height=600,
-            width=1000,
+            width=900,
             xaxis_title="Team",
             yaxis_title="Points",
             legend_title="Driver",
             barmode="group",
-            bargap=0.3,  # Increased gap between groups
-            bargroupgap=0.1,  # Gap between bars within a group
+            bargap=0.2,  # Increased gap between groups
+            bargroupgap=0.05,  # Gap between bars within a group
             font=dict(size=12),
             title="Driver Points by Team",
             title_font_size=16
