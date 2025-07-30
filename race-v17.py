@@ -385,6 +385,7 @@ with tab1:
             st.write("No races completed yet.")
 
 # Tab 2: Drivers' Championship Standings and Chart
+# Tab 2: Drivers' Championship Standings and Chart
 with tab2:
     st.subheader("🏆 Drivers' Championship Standings")
     st.write(f"**Races Completed: {st.session_state.races_completed}**")
@@ -412,7 +413,7 @@ with tab2:
     driver_chart_data = []
     for driver, points in sorted_driver_standings:
         team = next(d['team'] for d in drivers if d['driver'] == driver)
-        driver_chart_data.append({"Driver": driver, "Team": team, "Points": points, "Color": driver_colors[driver]})
+        driver_chart_data.append({"Driver": driver, "Team": team, "Points": points})
 
     if driver_chart_data:
         driver_df_chart = pd.DataFrame(driver_chart_data)
@@ -427,7 +428,7 @@ with tab2:
             y="Points",
             color="Team",
             text="Points",
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
+            color_discrete_map=team_colors  # Use provided team_colors
         )
         fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)  # Maintain wide bars
         fig.update_layout(
