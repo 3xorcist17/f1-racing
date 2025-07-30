@@ -385,6 +385,7 @@ with tab1:
             st.write("No races completed yet.")
 
 # Tab 2: Drivers' Championship Standings and Chart
+# Tab 2: Drivers' Championship Standings and Chart
 with tab2:
     st.subheader("🏆 Drivers' Championship Standings")
     st.write(f"**Races Completed: {st.session_state.races_completed}**")
@@ -408,69 +409,33 @@ with tab2:
     st.dataframe(driver_df, use_container_width=True, hide_index=True)
 
     st.markdown("### Drivers' Points Distribution")
-    driver_chart_data = []
-    for driver, points in sorted_driver_standings:
-        if points > 0:
-            team = next(d['team'] for d in drivers if d['driver'] == driver)
-            driver_chart_data.append({
-                "Driver": driver,
-                "Team": team,
-                "Points": points,
-                "Color": driver_colors[driver]
-            })
-    
-    if driver_chart_data:
-        driver_df_chart = pd.DataFrame(driver_chart_data)
-        
-        # Ensure all teams have both drivers (fill missing with 0 points)
-        complete_chart_data = []
-        for team in teams_drivers.keys():
-            driver1, driver2 = teams_drivers[team]
-            
-            # Get points for driver1
-            driver1_data = driver_df_chart[driver_df_chart['Driver'] == driver1]
-            if not driver1_data.empty:
-                points1 = driver1_data.iloc[0]['Points']
-            else:
-                points1 = 0
-                
-            # Get points for driver2
-            driver2_data = driver_df_chart[driver_df_chart['Driver'] == driver2]
-            if not driver2_data.empty:
-                points2 = driver2_data.iloc[0]['Points']
-            else:
-                points2 = 0
-            
-            # Only include teams where at least one driver has points
-            if points1 > 0 or points2 > 0:
-                complete_chart_data.append({
-                    "Team": team,
-                    "Driver": driver1,
-                    "Points": points1,
-                    "Color": driver_colors[driver1]
-                })
-                complete_chart_data.append({
-                    "Team": team,
-                    "Driver": driver2,
-                    "Points": points2,
-                    "Color": driver_colors[driver2]
-                })
-        
-        complete_df = pd.DataFrame(complete_chart_data)
-        
-        # Create grouped bar chart by team
+    # Prepare data for grouped bar chart
+    team_driver_data = []
+    for team in teams_drivers.keys():
+        driver1, driver2 = teams_drivers[team]
+        driver1_points = st.session_state.total_driver_points.get(driver1, 0)
+        driver2_points = st.session_state.total_driver_points.get(driver2, 0)
+        if driver1_points > 0 or driver2_points > 0:
+            team_driver_data.append({"Team": team, "Driver": driver1, "Points": driver1_points, "Color": driver_colors[driver1]})
+            team_driver_data.append({"Team": team, "Driver": driver2, "Points": driver2_points, "Color": driver_colors[driver2]})
+
+    if team_driver_data:
+        team_driver_df = pd.DataFrame(team_driver_data)
+        # Debug: Display the DataFrame to verify structure
+        st.write("Debug: DataFrame for Bar Chart")
+        st.dataframe(team_driver_df, use_container_width=True, hide_index=True)
+
+        # Create grouped bar chart with explicit long-form data
         fig = px.bar(
-            complete_df,
+            team_driver_df,
             x="Team",
             y="Points",
             color="Driver",
-            title="Driver Points by Team",
-            labels={"Points": "Points", "Team": "Team"},
-            color_discrete_map={row["Driver"]: row["Color"] for _, row in complete_df.iterrows()},
-            barmode="group"
+            barmode="group",
+            text="Points",
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in team_driver_df.iterrows()}
         )
-        
-        # Update layout for better visibility
+        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}")
         fig.update_layout(
             height=600,
             width=1000,
@@ -478,29 +443,12 @@ with tab2:
             yaxis_title="Points",
             legend_title="Driver",
             barmode="group",
-            bargap=0.2,  # Gap between team groups
-            bargroupgap=0.1,  # Small gap between bars within a group
+            bargap=0.3,  # Increased gap between groups
+            bargroupgap=0.1,  # Gap between bars within a group
             font=dict(size=12),
+            title="Driver Points by Team",
             title_font_size=16
         )
-        
-        # Add driver name and points labels on bars
-        for trace in fig.data:
-            driver_name = trace.name
-            custom_text = []
-            for value in trace.y:
-                if value > 0:
-                    custom_text.append(f"{driver_name}<br>{int(value)}")
-                else:
-                    custom_text.append("")
-            
-            trace.text = custom_text
-            trace.textposition = "outside"
-            trace.textfont = dict(size=11, color="black")
-        
-        # Update bar width
-        fig.update_traces(width=0.4)
-        
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.write("No points data available yet. Please complete a race in the 'Race & Results' tab.")
