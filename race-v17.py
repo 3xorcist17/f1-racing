@@ -1120,34 +1120,125 @@ with tab4:
     st.dataframe(driver_stats_df, use_container_width=True, hide_index=True)
 
 # Tab 5: Driver Upgrades
+# Additional CSS for Tab 5 UI
+st.markdown("""
+    <style>
+    .driver-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 10px 0;
+        color: #000000;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .driver-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+    }
+    
+    .suggestion-badge {
+        background: #ffd700;
+        color: #000000;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 10px;
+        display: inline-block;
+    }
+    
+    .headstart-progress {
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        height: 20px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    
+    .headstart-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--driver-color) 0%, var(--driver-color-light) 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000000;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .input-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .custom-input {
+        background: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 8px;
+        width: 80px;
+        text-align: center;
+        font-size: 14px;
+        color: #000000;
+        transition: border-color 0.3s ease;
+    }
+    
+    .custom-input:focus {
+        border-color: #667eea;
+        outline: none;
+    }
+    
+    .reset-button {
+        background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%);
+        color: #000000;
+        border-radius: 10px;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .reset-button:hover {
+        transform: scale(1.05);
+    }
+    
+    .summary-card {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        color: #000000;
+        box-shadow: 0 8px 32px rgba(30, 60, 114, 0.4);
+        text-align: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Tab 5: Driver Upgrades with Enhanced UI
 with tab5:
     st.markdown('<div class="race-container">', unsafe_allow_html=True)
     st.markdown("### 🚀 Driver Upgrades")
-    st.markdown("Use **Upgrade Points (UP)** earned from races to boost driver headstarts (1-9% per driver, max 50% total).")
+    st.markdown("Set headstart percentages (1-9%) for each driver to boost their race start.")
     
-    # Initialize session state for Upgrade Points
-    if 'total_upgrade_points' not in st.session_state:
-        st.session_state.total_upgrade_points = 0
+    # Summary Dashboard
+    total_headstart = sum(st.session_state.driver_headstarts.values())
+    st.markdown(f'''
+    <div class="summary-card">
+        <h3>Race Setup Overview</h3>
+        <p>Total Headstart Used: {total_headstart}%</p>
+        <p>Races Completed: {st.session_state.races_completed}</p>
+    </div>
+    ''', unsafe_allow_html=True)
     
-    # Display available Upgrade Points
-    st.markdown(f"**Available Upgrade Points: {st.session_state.total_upgrade_points} UP**")
-    
-    # Constants
-    UP_COST_PER_PERCENT = 10  # Cost of 1% headstart
-    MAX_HEADSTART_PER_DRIVER = 9  # Max headstart per driver
-    MAX_TOTAL_HEADSTART = 50  # Max total headstart across all drivers
-    
-    # Calculate current total headstart
-    current_total_headstart = sum(st.session_state.driver_headstarts.values())
-    
-    # Warning if total headstart exceeds limit
-    if current_total_headstart > MAX_TOTAL_HEADSTART:
-        st.markdown('<div class="rating-card" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); color: #000000;">', unsafe_allow_html=True)
-        st.write(f"⚠️ Total headstart ({current_total_headstart}%) exceeds limit of {MAX_TOTAL_HEADSTART}%. Adjust below.")
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Reset button
-    if st.button("🔄 Reset All Headstarts"):
+    # Reset Button
+    if st.button("🔄 Reset All Headstarts", key="reset_headstarts", help="Reset all driver headstarts to 1%"):
         for driver_info in drivers:
             st.session_state.driver_headstarts[driver_info['driver']] = 1
         st.rerun()
@@ -1155,96 +1246,77 @@ with tab5:
     st.markdown("---")
     st.markdown("#### Driver Upgrade Settings")
     
+    # Grid layout for driver cards (2 columns)
     headstart_data = []
-    for driver_info in drivers:
+    cols = st.columns(2)
+    for idx, driver_info in enumerate(drivers):
         driver = driver_info['driver']
         team = driver_info['team']
         current_headstart = st.session_state.driver_headstarts.get(driver, 1)
         
         # Calculate driver rating for suggestion
         rating = calculate_driver_rating(driver)
-        suggestion = "🔥 Suggested" if rating > 7.5 or current_headstart < 3 else ""
+        suggestion = '<span class="suggestion-badge">🔥 Suggested</span>' if rating > 7.5 or current_headstart < 3 else ""
         
-        # Headstart slider
-        st.markdown(f'''
-        <div class="rating-card">
-            <div class="rating-header">
-                <div>
-                    <div class="driver-name">{driver} ({team}) {suggestion}</div>
-                    <div class="team-name">Rating: {rating:.1f}/10 | Points: {st.session_state.total_driver_points[driver]}</div>
+        # Get driver color
+        base_color = driver_colors.get(driver, '#3498db')
+        if base_color.startswith('hsl'):
+            hsl_parts = base_color.replace('hsl(', '').replace(')', '').split(',')
+            hue = hsl_parts[0].strip()
+            saturation = hsl_parts[1].strip()
+            lightness = float(hsl_parts[2].replace('%', '').strip())
+            lighter_lightness = min(95, lightness + 20)
+            light_color = f"hsl({hue}, {saturation}, {lighter_lightness}%)"
+        else:
+            light_color = base_color
+        
+        # Driver card
+        with cols[idx % 2]:
+            st.markdown(f'''
+            <div class="driver-card" style="--driver-color: {base_color}; --driver-color-light: {light_color};">
+                <div class="rating-header">
+                    <div>
+                        <div class="driver-name">{driver} ({team}) {suggestion}</div>
+                        <div class="team-name">Rating: {rating:.1f}/10 | Points: {st.session_state.total_driver_points[driver]}</div>
+                    </div>
+                    <div class="rating-score">{current_headstart}%</div>
                 </div>
-                <div class="rating-score">{current_headstart}%</div>
-            </div>
-            <div class="rating-details">
-                <span>Wins: {st.session_state.driver_wins[driver]}</span>
-                <span>Podiums: {st.session_state.driver_podiums[driver]}</span>
-                <span>Cost: {UP_COST_PER_PERCENT * current_headstart} UP</span>
-            </div>
-        </div>
-        ''', unsafe_allow_html=True)
-        
-        # Progress bar for headstart (styled like Tab 2 teammate battles)
-        percentage = (current_headstart / MAX_HEADSTART_PER_DRIVER) * 100
-        st.markdown(f'''
-        <div style="margin-bottom: 15px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                <span style="font-weight: bold; color: {driver_colors[driver]};">Headstart</span>
-                <span style="font-weight: bold; color: #000000;">{current_headstart}%</span>
-            </div>
-            <div style="background-color: #f0f0f0; border-radius: 10px; height: 20px; overflow: hidden;">
-                <div style="background-color: {driver_colors[driver]}; height: 100%; width: {percentage}%; display: flex; align-items: center; justify-content: center; color: #000000; font-size: 12px; font-weight: bold;">
-                    {percentage:.0f}%
+                <div class="rating-details">
+                    <span>Wins: {st.session_state.driver_wins[driver]}</span>
+                    <span>Podiums: {st.session_state.driver_podiums[driver]}</span>
+                </div>
+                <div class="headstart-progress">
+                    <div class="headstart-fill" style="width: {(current_headstart / 9) * 100}%;">
+                        {current_headstart}%
+                    </div>
                 </div>
             </div>
-        </div>
-        ''', unsafe_allow_html=True)
-        
-        # Slider for headstart adjustment
-        new_headstart = st.slider(
-            f"Headstart for {driver} ({team})",
-            min_value=1,
-            max_value=MAX_HEADSTART_PER_DRIVER,
-            value=current_headstart,
-            step=1,
-            key=f"headstart_{driver}"
-        )
-        
-        # Check if change is valid
-        headstart_change = new_headstart - current_headstart
-        up_cost = headstart_change * UP_COST_PER_PERCENT
-        new_total_headstart = current_total_headstart + headstart_change
-        
-        if headstart_change != 0:
-            if up_cost > st.session_state.total_upgrade_points:
-                st.markdown('<div class="rating-card" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); color: #000000;">', unsafe_allow_html=True)
-                st.write(f"⚠️ Insufficient UP! Need {up_cost} UP, have {st.session_state.total_upgrade_points} UP.")
-                st.markdown('</div>', unsafe_allow_html=True)
-            elif new_total_headstart > MAX_TOTAL_HEADSTART:
-                st.markdown('<div class="rating-card" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%); color: #000000;">', unsafe_allow_html=True)
-                st.write(f"⚠️ Total headstart would be {new_total_headstart}%, exceeding limit of {MAX_TOTAL_HEADSTART}%.")
-                st.markdown('</div>', unsafe_allow_html=True)
-            else:
-                st.session_state.driver_headstarts[driver] = new_headstart
-                st.session_state.total_upgrade_points -= up_cost
-                # Check for team bonus
-                teammate = next(d for d in teams_drivers[team] if d != driver)
-                if st.session_state.driver_headstarts[driver] > 1 and st.session_state.driver_headstarts[teammate] > 1:
-                    if st.session_state.driver_headstarts[driver] < MAX_HEADSTART_PER_DRIVER:
-                        st.session_state.driver_headstarts[driver] = min(st.session_state.driver_headstarts[driver] + 1, MAX_HEADSTART_PER_DRIVER)
-                        st.markdown(f'<div class="rating-card" style="color: #000000;">Team Bonus: +1% headstart for {driver}!</div>', unsafe_allow_html=True)
-                st.rerun()
-        
-        headstart_data.append({
-            "Driver": driver,
-            "Team": team,
-            "Headstart (%)": st.session_state.driver_headstarts[driver],
-            "UP Spent": UP_COST_PER_PERCENT * st.session_state.driver_headstarts[driver]
-        })
+            ''', unsafe_allow_html=True)
+            
+            # Headstart input
+            st.markdown('<div class="input-container">', unsafe_allow_html=True)
+            new_headstart = st.number_input(
+                f"Headstart for {driver}",
+                min_value=1,
+                max_value=9,
+                value=current_headstart,
+                step=1,
+                key=f"headstart_{driver}",
+                help=f"Set headstart for {driver} (1-9%)",
+                format="%d"
+            )
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.session_state.driver_headstarts[driver] = new_headstart
+            
+            headstart_data.append({
+                "Driver": driver,
+                "Team": team,
+                "Headstart (%)": st.session_state.driver_headstarts[driver]
+            })
     
     # Current Headstart Settings Table
     st.markdown("---")
     st.markdown("#### Current Headstart Settings")
-    st.markdown(f"**Total Headstart Used: {current_total_headstart}% / {MAX_TOTAL_HEADSTART}%**")
     headstart_df = pd.DataFrame(headstart_data)
     st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
     for idx, row in headstart_df.iterrows():
@@ -1252,7 +1324,7 @@ with tab5:
         st.markdown(f'''
         <div class="leaderboard-item {card_class}">
             <span>{row["Driver"]} ({row["Team"]})</span>
-            <span>{row["Headstart (%)"]}% ({row["UP Spent"]} UP)</span>
+            <span>{row["Headstart (%)"]}%</span>
         </div>
         ''', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
