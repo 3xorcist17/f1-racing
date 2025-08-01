@@ -233,7 +233,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "Season Summary"
 ])
 
-# Tab 1: Race and Current Results (Podium)
+# Tab 1: Enhanced Race and Current Results (Podium) - PROGRESS BARS SECTION ONLY
 with tab1:
     col1, col2 = st.columns([2, 1])
     
@@ -250,19 +250,259 @@ with tab1:
             st.session_state.race_started = True
             st.rerun()
 
-        # Display initial headstarts before race simulation
+        # ENHANCED VISUAL PROGRESS BARS SECTION
         if st.session_state.race_started and not st.session_state.race_finished:
-            cols = [st.columns([1, 3]) for _ in range(20)]
-            progress_bars = []
-            for i in range(20):
-                with cols[i][0]:
-                    st.write(f"**{drivers[i]['driver']} ({drivers[i]['team']})**")
-                with cols[i][1]:
-                    progress_bars.append(st.progress(st.session_state.progress_values[i] / 100))
+            
+            # Add enhanced CSS for beautiful progress bars
+            st.markdown("""
+                <style>
+                .race-container {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border-radius: 15px;
+                    padding: 20px;
+                    margin: 10px 0;
+                    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+                }
+                
+                .driver-row {
+                    background: rgba(255, 255, 255, 0.95);
+                    border-radius: 12px;
+                    padding: 15px;
+                    margin: 8px 0;
+                    display: flex;
+                    align-items: center;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                    transition: all 0.3s ease;
+                    border-left: 5px solid var(--driver-color);
+                }
+                
+                .driver-row:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                }
+                
+                .driver-info {
+                    min-width: 150px;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .driver-name {
+                    font-weight: bold;
+                    font-size: 16px;
+                    color: #2c3e50;
+                    margin-bottom: 4px;
+                }
+                
+                .team-name {
+                    font-size: 12px;
+                    color: #7f8c8d;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .progress-container {
+                    flex: 1;
+                    margin: 0 20px;
+                    position: relative;
+                }
+                
+                .custom-progress-bar {
+                    width: 100%;
+                    height: 25px;
+                    background: linear-gradient(90deg, #ecf0f1 0%, #bdc3c7 100%);
+                    border-radius: 15px;
+                    overflow: hidden;
+                    position: relative;
+                    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+                
+                .progress-fill {
+                    height: 100%;
+                    background: linear-gradient(90deg, var(--driver-color) 0%, var(--driver-color-light) 100%);
+                    border-radius: 15px;
+                    position: relative;
+                    transition: width 0.5s ease-out;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                }
+                
+                .progress-fill::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 50%;
+                    background: linear-gradient(90deg, 
+                        rgba(255,255,255,0.3) 0%, 
+                        rgba(255,255,255,0.1) 50%, 
+                        rgba(255,255,255,0.3) 100%);
+                    border-radius: 15px 15px 0 0;
+                }
+                
+                .progress-text {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-weight: bold;
+                    font-size: 12px;
+                    color: #2c3e50;
+                    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+                    z-index: 10;
+                }
+                
+                .progress-status {
+                    min-width: 100px;
+                    text-align: right;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                }
+                
+                .status-text {
+                    font-weight: bold;
+                    font-size: 14px;
+                    color: #2c3e50;
+                }
+                
+                .status-subtext {
+                    font-size: 11px;
+                    color: #7f8c8d;
+                    margin-top: 2px;
+                }
+                
+                .finished-row {
+                    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+                    color: white;
+                }
+                
+                .finished-row .driver-name,
+                .finished-row .team-name,
+                .finished-row .status-text,
+                .finished-row .progress-text {
+                    color: white;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                }
+                
+                .position-indicator {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-right: 10px;
+                    min-width: 40px;
+                    text-align: center;
+                }
+                
+                .racing-animation {
+                    animation: pulse 2s infinite;
+                }
+                
+                @keyframes pulse {
+                    0% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+                    50% { box-shadow: 0 6px 25px rgba(102, 126, 234, 0.3); }
+                    100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+                }
+                
+                .speed-indicator {
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(0, 0, 0, 0.1);
+                    border-radius: 10px;
+                    padding: 2px 8px;
+                    font-size: 10px;
+                    font-weight: bold;
+                }
+                </style>
+            """, unsafe_allow_html=True)
+            
+            st.markdown('<div class="race-container">', unsafe_allow_html=True)
+            st.markdown("### 🏎️ Live Race Progress")
+            
+            # Create progress bars with enhanced styling
+            progress_placeholders = []
+            current_leaderboard = get_current_leaderboard()
+            
+            for pos, driver_info in enumerate(current_leaderboard, 1):
+                progress = driver_info['progress']
+                driver = driver_info['driver']
+                team = driver_info['team']
+                is_finished = driver_info.get('finished', False)
+                
+                # Get driver color
+                base_color = driver_colors.get(driver, '#3498db')
+                # Create lighter version for gradient
+                if base_color.startswith('hsl'):
+                    # Extract HSL values and create lighter version
+                    hsl_parts = base_color.replace('hsl(', '').replace(')', '').split(',')
+                    hue = hsl_parts[0].strip()
+                    saturation = hsl_parts[1].strip()
+                    lightness = float(hsl_parts[2].replace('%', '').strip())
+                    lighter_lightness = min(95, lightness + 20)
+                    light_color = f"hsl({hue}, {saturation}, {lighter_lightness}%)"
+                else:
+                    light_color = base_color
+                
+                # Position indicators
+                position_emoji = ""
+                if pos == 1:
+                    position_emoji = "🥇"
+                elif pos == 2:
+                    position_emoji = "🥈"
+                elif pos == 3:
+                    position_emoji = "🥉"
+                else:
+                    position_emoji = f"P{pos}"
+                
+                # Status text
+                if is_finished:
+                    status_text = "🏁 FINISHED"
+                    status_subtext = "Race Complete"
+                    row_class = "finished-row"
+                    animation_class = ""
+                else:
+                    status_text = f"{progress:.1f}%"
+                    status_subtext = "Racing..."
+                    row_class = ""
+                    animation_class = "racing-animation" if progress > 50 else ""
+                
+                # Speed calculation (simulated)
+                speed_kmh = int(200 + (progress / 100) * 150 + (pos * -5))  # Simulate speed
+                
+                # Create the enhanced progress bar HTML
+                progress_html = f'''
+                <div class="driver-row {row_class} {animation_class}" 
+                     style="--driver-color: {base_color}; --driver-color-light: {light_color};">
+                    <div class="position-indicator">{position_emoji}</div>
+                    <div class="driver-info">
+                        <div class="driver-name">{driver}</div>
+                        <div class="team-name">{team}</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="custom-progress-bar">
+                            <div class="progress-fill" style="width: {progress}%;">
+                                <div class="speed-indicator">{speed_kmh} km/h</div>
+                            </div>
+                            <div class="progress-text">{progress:.1f}%</div>
+                        </div>
+                    </div>
+                    <div class="progress-status">
+                        <div class="status-text">{status_text}</div>
+                        <div class="status-subtext">{status_subtext}</div>
+                    </div>
+                </div>
+                '''
+                
+                placeholder = st.empty()
+                placeholder.markdown(progress_html, unsafe_allow_html=True)
+                progress_placeholders.append((placeholder, driver_info))
+            
+            st.markdown('</div>', unsafe_allow_html=True)
 
             leaderboard_placeholder = col2.empty()
             
-            current_leaderboard = get_current_leaderboard()
+            # Display initial leaderboard
             with leaderboard_placeholder.container():
                 st.markdown("### 🏁 Live Leaderboard")
                 st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
@@ -306,6 +546,7 @@ with tab1:
             # Brief pause to show initial headstarts
             time.sleep(1)
 
+            # RACE SIMULATION LOOP WITH ENHANCED UPDATES
             while (st.session_state.race_started and 
                    any(value < 100 for value in st.session_state.progress_values) and 
                    not st.session_state.race_finished):
@@ -316,86 +557,176 @@ with tab1:
                         st.session_state.progress_values[i] = min(100, st.session_state.progress_values[i] + increment)
                         if st.session_state.progress_values[i] == 100 and drivers[i]['driver'] not in [d['driver'] for d in st.session_state.finish_order]:
                             st.session_state.finish_order.append(drivers[i])
-                        progress_bars[i].progress(st.session_state.progress_values[i] / 100)
                 
-                    current_leaderboard = get_current_leaderboard()
-                    with leaderboard_placeholder.container():
-                        st.markdown("### 🏁 Live Leaderboard")
-                        st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
+                # Update progress bars with new styling
+                current_leaderboard = get_current_leaderboard()
+                
+                for idx, (placeholder, _) in enumerate(progress_placeholders):
+                    if idx < len(current_leaderboard):
+                        driver_info = current_leaderboard[idx]
+                        pos = idx + 1
+                        progress = driver_info['progress']
+                        driver = driver_info['driver']
+                        team = driver_info['team']
+                        is_finished = driver_info.get('finished', False)
                         
-                        for pos, driver_info in enumerate(current_leaderboard, 1):
-                            progress = driver_info['progress']
-                            driver = driver_info['driver']
-                            team = driver_info['team']
-                            is_finished = driver_info.get('finished', False)
-                            
-                            position_class = ""
-                            medal = ""
-                            if pos == 1:
-                                position_class = "position-1"
-                                medal = "🥇 "
-                            elif pos == 2:
-                                position_class = "position-2"
-                                medal = "🥈 "
-                            elif pos == 3:
-                                position_class = "position-3"
-                                medal = "🥉 "
-                            
-                            if is_finished:
-                                progress_display = "🏁 FINISHED"
-                            else:
-                                progress_display = f"{progress:.1f}%"
-                            
-                            st.markdown(f'''
-                            <div class="leaderboard-item {position_class}">
-                                <span><strong>{medal}P{pos}: {driver}</strong> ({team})</span>
-                                <span><strong>{progress_display}</strong></span>
+                        # Get driver color
+                        base_color = driver_colors.get(driver, '#3498db')
+                        if base_color.startswith('hsl'):
+                            hsl_parts = base_color.replace('hsl(', '').replace(')', '').split(',')
+                            hue = hsl_parts[0].strip()
+                            saturation = hsl_parts[1].strip()
+                            lightness = float(hsl_parts[2].replace('%', '').strip())
+                            lighter_lightness = min(95, lightness + 20)
+                            light_color = f"hsl({hue}, {saturation}, {lighter_lightness}%)"
+                        else:
+                            light_color = base_color
+                        
+                        # Position indicators
+                        position_emoji = ""
+                        if pos == 1:
+                            position_emoji = "🥇"
+                        elif pos == 2:
+                            position_emoji = "🥈"
+                        elif pos == 3:
+                            position_emoji = "🥉"
+                        else:
+                            position_emoji = f"P{pos}"
+                        
+                        # Status text
+                        if is_finished:
+                            status_text = "🏁 FINISHED"
+                            status_subtext = "Race Complete"
+                            row_class = "finished-row"
+                            animation_class = ""
+                        else:
+                            status_text = f"{progress:.1f}%"
+                            status_subtext = "Racing..."
+                            row_class = ""
+                            animation_class = "racing-animation" if progress > 70 else ""
+                        
+                        # Dynamic speed simulation
+                        base_speed = 200 + (progress / 100) * 150
+                        position_penalty = pos * -3
+                        random_variation = random.randint(-10, 10)
+                        speed_kmh = int(base_speed + position_penalty + random_variation)
+                        speed_kmh = max(180, min(350, speed_kmh))  # Realistic F1 speed range
+                        
+                        # Update the progress bar
+                        progress_html = f'''
+                        <div class="driver-row {row_class} {animation_class}" 
+                             style="--driver-color: {base_color}; --driver-color-light: {light_color};">
+                            <div class="position-indicator">{position_emoji}</div>
+                            <div class="driver-info">
+                                <div class="driver-name">{driver}</div>
+                                <div class="team-name">{team}</div>
                             </div>
-                            ''', unsafe_allow_html=True)
+                            <div class="progress-container">
+                                <div class="custom-progress-bar">
+                                    <div class="progress-fill" style="width: {progress}%;">
+                                        <div class="speed-indicator">{speed_kmh} km/h</div>
+                                    </div>
+                                    <div class="progress-text">{progress:.1f}%</div>
+                                </div>
+                            </div>
+                            <div class="progress-status">
+                                <div class="status-text">{status_text}</div>
+                                <div class="status-subtext">{status_subtext}</div>
+                            </div>
+                        </div>
+                        '''
                         
-                        st.markdown('</div>', unsafe_allow_html=True)
+                        placeholder.markdown(progress_html, unsafe_allow_html=True)
+                
+                # Update leaderboard (existing code continues...)
+                with leaderboard_placeholder.container():
+                    st.markdown("### 🏁 Live Leaderboard")
+                    st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
+                    
+                    for pos, driver_info in enumerate(current_leaderboard, 1):
+                        progress = driver_info['progress']
+                        driver = driver_info['driver']
+                        team = driver_info['team']
+                        is_finished = driver_info.get('finished', False)
+                        
+                        position_class = ""
+                        medal = ""
+                        if pos == 1:
+                            position_class = "position-1"
+                            medal = "🥇 "
+                        elif pos == 2:
+                            position_class = "position-2"
+                            medal = "🥈 "
+                        elif pos == 3:
+                            position_class = "position-3"
+                            medal = "🥉 "
+                        
+                        if is_finished:
+                            progress_display = "🏁 FINISHED"
+                        else:
+                            progress_display = f"{progress:.1f}%"
+                        
+                        st.markdown(f'''
+                        <div class="leaderboard-item {position_class}">
+                            <span><strong>{medal}P{pos}: {driver}</strong> ({team})</span>
+                            <span><strong>{progress_display}</strong></span>
+                        </div>
+                        ''', unsafe_allow_html=True)
+                    
+                    st.markdown('</div>', unsafe_allow_html=True)
                 
                 if len(st.session_state.finish_order) == 20:
                     st.session_state.race_finished = True
                     st.session_state.races_completed += 1
                     st.session_state.race_started = False
                     
-                    current_leaderboard = get_current_leaderboard()
-                    with leaderboard_placeholder.container():
-                        st.markdown("### 🏁 Leaderboard")
-                        st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
-                        
-                        for pos, driver_info in enumerate(current_leaderboard, 1):
+                    # Final update with finished styling
+                    for idx, (placeholder, _) in enumerate(progress_placeholders):
+                        if idx < len(current_leaderboard):
+                            driver_info = current_leaderboard[idx]
+                            pos = idx + 1
                             driver = driver_info['driver']
                             team = driver_info['team']
-                            points = points_system.get(pos, 0)
+                            base_color = driver_colors.get(driver, '#3498db')
                             
-                            position_class = ""
-                            medal = ""
+                            position_emoji = ""
                             if pos == 1:
-                                position_class = "position-1"
-                                medal = "🥇 "
+                                position_emoji = "🥇"
                             elif pos == 2:
-                                position_class = "position-2"
-                                medal = "🥈 "
+                                position_emoji = "🥈"
                             elif pos == 3:
-                                position_class = "position-3"
-                                medal = "🥉 "
-                            
-                            if pos <= 10:
-                                progress_display = f"{points} pts"
+                                position_emoji = "🥉"
                             else:
-                                progress_display = "0 pts"
+                                position_emoji = f"P{pos}"
                             
-                            st.markdown(f'''
-                            <div class="leaderboard-item {position_class}">
-                                <span><strong>{medal}P{pos}: {driver}</strong> ({team})</span>
-                                <span><strong>{progress_display}</strong></span>
+                            points = points_system.get(pos, 0)
+                            status_text = f"🏁 FINISHED"
+                            status_subtext = f"{points} points" if pos <= 10 else "0 points"
+                            
+                            progress_html = f'''
+                            <div class="driver-row finished-row">
+                                <div class="position-indicator">{position_emoji}</div>
+                                <div class="driver-info">
+                                    <div class="driver-name">{driver}</div>
+                                    <div class="team-name">{team}</div>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="custom-progress-bar">
+                                        <div class="progress-fill" style="width: 100%;">
+                                        </div>
+                                        <div class="progress-text">100%</div>
+                                    </div>
+                                </div>
+                                <div class="progress-status">
+                                    <div class="status-text">{status_text}</div>
+                                    <div class="status-subtext">{status_subtext}</div>
+                                </div>
                             </div>
-                            ''', unsafe_allow_html=True)
-                        
-                        st.markdown('</div>', unsafe_allow_html=True)
+                            '''
+                            
+                            placeholder.markdown(progress_html, unsafe_allow_html=True)
                     
+                    # Update points and statistics (existing code...)
                     for position, driver_info in enumerate(st.session_state.finish_order, 1):
                         if position <= 10:
                             points = points_system.get(position, 0)
@@ -407,6 +738,7 @@ with tab1:
                         if position <= 3:
                             st.session_state.driver_podiums[driver_info['driver']] += 1
                             st.session_state.team_podiums[driver_info['team']] += 1
+                    
                     if len(st.session_state.finish_order) >= 3:
                         race_summary = {
                             "Race": st.session_state.races_completed,
@@ -416,6 +748,7 @@ with tab1:
                         }
                         st.session_state.race_summaries.append(race_summary)
                     break
+                
                 time.sleep(1)
 
     with col2:
