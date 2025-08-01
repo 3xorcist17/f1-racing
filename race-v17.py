@@ -51,17 +51,17 @@ st.markdown("""
     
     .rating-card-gold {
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #000000;
+        color: #000000;;
     }
     
     .rating-card-silver {
         background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
-        color: #000000;
+        color: #000000;;
     }
     
     .rating-card-bronze {
         background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
-        color: #000000;
+        color: #000000;;
     }
     
     .rating-header {
@@ -733,241 +733,149 @@ with tab1:
 
 # Tab 2: Drivers' Championship Standings and Chart
 with tab2:
-    st.subheader("🏆 Drivers' Championship Standings")
-    st.write(f"**Races Completed: {st.session_state.races_completed}**")
-    st.markdown("")
-    sorted_driver_standings = sorted(st.session_state.total_driver_points.items(), key=lambda x: x[1], reverse=True)
-    st.write("**Top 3 Drivers**")
-    for pos, (driver, points) in enumerate(sorted_driver_standings[:3], 1):
-        team = next(d['team'] for d in drivers if d['driver'] == driver)
-        if pos == 1:
-            st.write(f"🥇 **P1: {driver} ({team})** - {points} points")
-        elif pos == 2:
-            st.write(f"🥈 **P2: {driver} ({team})** - {points} points")
-        elif pos == 3:
-            st.write(f"🥉 **P3: {driver} ({team})** - {points} points")
-    st.markdown("")
+    st.markdown('<div class="race-container">', unsafe_allow_html=True)
+    st.markdown("### 🏆 Drivers' Championship Standings")
+    st.markdown(f"**Races Completed: {st.session_state.races_completed}**")
     
-    # Enhanced driver standings table with teammate comparison
+    # Top 3 Drivers in Card Format
+    sorted_driver_standings = sorted(st.session_state.total_driver_points.items(), key=lambda x: x[1], reverse=True)
+    if sorted_driver_standings and st.session_state.races_completed > 0:
+        st.markdown("#### 🥇 Top 3 Drivers")
+        for pos, (driver, points) in enumerate(sorted_driver_standings[:3], 1):
+            team = next(d['team'] for d in drivers if d['driver'] == driver)
+            wins = st.session_state.driver_wins[driver]
+            podiums = st.session_state.driver_podiums[driver]
+            card_class = "rating-card-gold" if pos == 1 else "rating-card-silver" if pos == 2 else "rating-card-bronze"
+            medal = "🥇" if pos == 1 else "🥈" if pos == 2 else "🥉"
+            position = "1st" if pos == 1 else "2nd" if pos == 2 else "3rd"
+            
+            st.markdown(f'''
+            <div class="rating-card {card_class}">
+                <div class="rating-header">
+                    <div>
+                        <div class="driver-name">{medal} {position} - {driver}</div>
+                        <div class="team-name">{team}</div>
+                    </div>
+                    <div class="rating-score">{points} pts</div>
+                </div>
+                <div class="rating-details">
+                    <span>Wins: {wins}</span>
+                    <span>Podiums: {podiums}</span>
+                    <span>Avg: {points/st.session_state.races_completed:.1f} pts/race</span>
+                </div>
+            </div>
+            ''', unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="rating-card">', unsafe_allow_html=True)
+        st.markdown("#### 🏁 No Data Available")
+        st.write("Complete some races to see championship standings!")
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Enhanced Driver Standings Table
+    st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
+    st.markdown("#### 📊 Complete Drivers' Standings")
     driver_standings_data = []
     for pos, (driver, points) in enumerate(sorted_driver_standings, 1):
         team = next(d['team'] for d in drivers if d['driver'] == driver)
-        
-        # Find teammate
-        teammate = None
-        teammate_points = 0
-        for other_driver in teams_drivers[team]:
-            if other_driver != driver:
-                teammate = other_driver
-                teammate_points = st.session_state.total_driver_points[other_driver]
-                break
-        
-        # Calculate gap to teammate
+        teammate = next(d for d in teams_drivers[team] if d != driver)
+        teammate_points = st.session_state.total_driver_points[teammate]
         points_gap = points - teammate_points
-        gap_display = ""
-        if points_gap > 0:
-            gap_display = f"+{points_gap}"
-        elif points_gap < 0:
-            gap_display = f"{points_gap}"
-        else:
-            gap_display = "0"
+        gap_display = f"+{points_gap}" if points_gap > 0 else str(points_gap) if points_gap < 0 else "0"
+        card_class = "position-1" if pos == 1 else "position-2" if pos == 2 else "position-3" if pos == 3 else ""
         
         driver_standings_data.append({
-            "Position": pos, 
-            "Driver": driver, 
-            "Team": team, 
+            "Position": pos,
+            "Driver": driver,
+            "Team": team,
             "Total Points": points,
             "Teammate": teammate,
             "Teammate Points": teammate_points,
             "Gap to Teammate": gap_display
         })
+        st.markdown(f'''
+        <div class="leaderboard-item {card_class}">
+            <span>{pos}. {driver} ({team})</span>
+            <span>{points} pts (Gap to {teammate}: {gap_display})</span>
+        </div>
+        ''', unsafe_allow_html=True)
     
-    driver_df = pd.DataFrame(driver_standings_data)
-    st.dataframe(driver_df, use_container_width=True, hide_index=True)
-
-    st.markdown("---")
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Teammate Comparison Section
-    st.markdown("### 🤝 Teammate Battles")
-    
     if st.session_state.races_completed > 0:
-        # Create teammate comparison cards
+        st.markdown("---")
+        st.markdown("#### 🤝 Teammate Battles")
         teams_processed = set()
-        
         for team, team_drivers in teams_drivers.items():
             if team not in teams_processed:
                 driver1, driver2 = team_drivers
                 driver1_points = st.session_state.total_driver_points[driver1]
                 driver2_points = st.session_state.total_driver_points[driver2]
                 
-                # Determine who's leading
-                if driver1_points > driver2_points:
-                    leading_driver = driver1
-                    trailing_driver = driver2
-                    leading_points = driver1_points
-                    trailing_points = driver2_points
-                elif driver2_points > driver1_points:
-                    leading_driver = driver2
-                    trailing_driver = driver1
-                    leading_points = driver2_points
-                    trailing_points = driver1_points
-                else:
-                    leading_driver = driver1
-                    trailing_driver = driver2
-                    leading_points = driver1_points
-                    trailing_points = driver2_points
-                
+                leading_driver = driver1 if driver1_points >= driver2_points else driver2
+                trailing_driver = driver2 if driver1_points >= driver2_points else driver1
+                leading_points = max(driver1_points, driver2_points)
+                trailing_points = min(driver1_points, driver2_points)
                 gap = leading_points - trailing_points
                 
-                # Create comparison visualization
-                col1, col2 = st.columns([1, 1])
-                
-                with col1:
-                    st.markdown(f"#### {team}")
-                    
-                    # Leading driver bar
-                    leading_percentage = 100 if (leading_points + trailing_points) == 0 else (leading_points / (leading_points + trailing_points)) * 100 if leading_points > 0 else 50
-                    trailing_percentage = 100 - leading_percentage
-                    
-                    # Custom HTML for teammate comparison
-                    st.markdown(f'''
-                    <div style="margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-weight: bold; color: {driver_colors[leading_driver]};">🥇 {leading_driver}</span>
-                            <span style="font-weight: bold;">{leading_points} pts</span>
+                st.markdown(f'''
+                <div class="rating-card">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">{team} Teammate Battle</div>
+                            <div class="team-name">{leading_driver} vs {trailing_driver}</div>
                         </div>
-                        <div style="background-color: #f0f0f0; border-radius: 10px; height: 20px; overflow: hidden;">
-                            <div style="background-color: {driver_colors[leading_driver]}; height: 100%; width: {leading_percentage}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                {leading_percentage:.0f}%
-                            </div>
-                        </div>
+                        <div class="rating-score">{gap} pts gap</div>
                     </div>
-                    
-                    <div style="margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-weight: bold; color: {driver_colors[trailing_driver]};">🥈 {trailing_driver}</span>
-                            <span style="font-weight: bold;">{trailing_points} pts</span>
-                        </div>
-                        <div style="background-color: #f0f0f0; border-radius: 10px; height: 20px; overflow: hidden;">
-                            <div style="background-color: {driver_colors[trailing_driver]}; height: 100%; width: {trailing_percentage}%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: bold;">
-                                {trailing_percentage:.0f}%
-                            </div>
-                        </div>
+                    <div class="rating-details">
+                        <span style="color: {driver_colors[leading_driver]}">{leading_driver}: {leading_points} pts</span>
+                        <span style="color: {driver_colors[trailing_driver]}">{trailing_driver}: {trailing_points} pts</span>
                     </div>
-                    
-                    <div style="text-align: center; font-size: 14px; color: #666;">
-                        <strong>Gap: {gap} points</strong>
-                    </div>
-                    ''', unsafe_allow_html=True)
+                </div>
+                ''', unsafe_allow_html=True)
                 
                 teams_processed.add(team)
-        
-        st.markdown("---")
-        
-        # Team Battle Chart
-        #st.markdown("### 📊 Team Battle Visualization")
-        
-        # Create data for teammate comparison chart
-        # teammate_data = []
-        # for team, team_drivers in teams_drivers.items():
-        #     driver1, driver2 = team_drivers
-        #     driver1_points = st.session_state.total_driver_points[driver1]
-        #     driver2_points = st.session_state.total_driver_points[driver2]
-            
-        #     teammate_data.extend([
-        #         {"Team": team, "Driver": driver1, "Points": driver1_points, "Color": driver_colors[driver1]},
-        #         {"Team": team, "Driver": driver2, "Points": driver2_points, "Color": driver_colors[driver2]}
-        #     ])
-        
-        # teammate_df = pd.DataFrame(teammate_data)
-
-        
-        
-        ## Create grouped bar chart
-    #     fig_teammates = px.bar(
-    #         teammate_df,
-    #         x="Team",
-    #         y="Points",
-    #         color="Driver",
-    #         title="Teammate Points Comparison by Team",
-    #         text="Points",
-    #         color_discrete_map={row["Driver"]: row["Color"] for _, row in teammate_df.iterrows()}
-    #     )
-        
-    #     fig_teammates.update_layout(
-    #         height=500,
-    #         xaxis_title="Team",
-    #         yaxis_title="Championship Points",
-    #         legend_title="Driver",
-    #         barmode="group"
-    #     )
-        
-    #     fig_teammates.update_traces(textposition="outside")
-    #     st.plotly_chart(fig_teammates, use_container_width=True)
     
-    # else:
-    #     st.write("Complete some races to see teammate battles!")
-
-    driver_chart_data = []
-    for driver, points in sorted_driver_standings:
-        team = next(d['team'] for d in drivers if d['driver'] == driver)
-        driver_chart_data.append({"Driver": driver, "Team": team, "Points": points})
-
-    if driver_chart_data:
+    # Driver Points Visualization
+    st.markdown("---")
+    st.markdown("#### 📊 Driver Points Visualization")
+    driver_chart_data = [
+        {"Driver": f"{driver} ({next(d['team'] for d in drivers if d['driver'] == driver)})", "Points": points, "Color": driver_colors[driver]}
+        for driver, points in sorted_driver_standings
+    ]
+    
+    if driver_chart_data and st.session_state.races_completed > 0:
         driver_df_chart = pd.DataFrame(driver_chart_data)
-        # Debug: Display the DataFrame to verify structure
-        #st.write("Debug: DataFrame for Bar Chart")
-        #st.dataframe(driver_df_chart, use_container_width=True, hide_index=True)
-
-        # Create bar chart sorted by points in descending order
         fig = px.bar(
             driver_df_chart,
             x="Driver",
             y="Points",
-            color="Team",
+            color="Driver",
             text="Points",
-            color_discrete_map=team_colors  # Use provided team_colors
+            color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
         )
-        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)  # Maintain wide bars
+        fig.update_traces(textposition="outside", texttemplate="%{text:.0f}", width=0.6)
         fig.update_layout(
             height=600,
-            width=1000,
             xaxis_title="Driver",
             yaxis_title="Points",
-            legend_title="Team",
-            bargap=0.2,  # Gap between bars
+            showlegend=False,
+            bargap=0.2,
             font=dict(size=12),
             title="Driver Points in Descending Order",
-            title_font_size=16
+            title_font_size=16,
+            plot_bgcolor='rgba(240, 242, 246, 0.95)',
+            paper_bgcolor='rgba(240, 242, 246, 0.95)'
         )
         st.plotly_chart(fig, use_container_width=True)
     else:
+        st.markdown('<div class="rating-card">', unsafe_allow_html=True)
         st.write("No points data available yet. Please complete a race in the 'Race & Results' tab.")
-
-    #st.markdown("---")
-
-    # st.markdown("### 🥧 Drivers' Points Distribution")
-    # driver_chart_data = [
-    #     {"value": points, "name": f"{driver} ({next(d['team'] for d in drivers if d['driver'] == driver)})", "itemStyle": {"color": driver_colors[driver]}}
-    #     for driver, points in sorted_driver_standings if points > 0
-    # ]
-    # if driver_chart_data:
-    #     driver_df_chart = pd.DataFrame([
-    #         {"Driver": item["name"], "Points": item["value"], "Color": item["itemStyle"]["color"]}
-    #         for item in driver_chart_data
-    #     ])
-    #     fig = px.pie(
-    #         driver_df_chart,
-    #         values="Points",
-    #         names="Driver",
-    #         color="Driver",
-    #         color_discrete_map={row["Driver"]: row["Color"] for _, row in driver_df_chart.iterrows()}
-    #     )
-    #     fig.update_traces(textposition="outside", textinfo="label+value")
-    #     fig.update_layout(height=600, legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
-    #     st.plotly_chart(fig, use_container_width=True)
-    # else:
-    #     st.write("No points data available yet. Please complete a race in the 'Race & Results' tab.")
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Tab 3: Constructors' Championship Standings and Chart
 with tab3:
