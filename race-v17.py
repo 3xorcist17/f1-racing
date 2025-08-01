@@ -235,7 +235,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 
 # Tab 1: Enhanced Race and Current Results (Podium) - PROGRESS BARS SECTION ONLY
 with tab1:
-    col1, col2 = st.columns([9, 1])  # Adjusted column ratio since no leaderboard
+    col1, col2 = st.columns([3, 1])  # Adjusted column ratio since no leaderboard
     
     with col1:
         if st.button("🏁 Start Race"):
@@ -373,16 +373,16 @@ with tab1:
                 }
                 
                 .finished-row {
-                    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-                    color: white;
+                    background: rgba(255, 255, 255, 0.95);
+                    color: #2c3e50;
                 }
                 
                 .finished-row .driver-name,
                 .finished-row .team-name,
                 .finished-row .status-text,
                 .finished-row .progress-text {
-                    color: white;
-                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                    color: #2c3e50;
+                    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
                 }
                 
                 .position-indicator {
@@ -452,7 +452,7 @@ with tab1:
                     display: flex;
                     justify-content: center;
                     align-items: flex-end;
-                    gap: 10px;
+                    gap: 20px;
                     position: relative;
                     z-index: 2;
                 }
@@ -460,6 +460,8 @@ with tab1:
                 .podium-step {
                     text-align: center;
                     transition: transform 0.3s ease;
+                    flex: 1;
+                    max-width: 200px;
                 }
                 
                 .podium-step:hover {
@@ -471,28 +473,27 @@ with tab1:
                     margin-bottom: 0;
                     position: relative;
                     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                    width: 100%;
+                    margin: 0 auto 10px;
                 }
                 
                 .podium-first {
-                    order: 2;
+                    order: 1;
                 }
                 
                 .podium-first .podium-platform {
                     background: linear-gradient(135deg, #ffd700 0%, #ffed4a 50%, #ffd700 100%);
                     height: 120px;
-                    width: 140px;
-                    margin: 0 auto 10px;
                 }
                 
                 .podium-second {
-                    order: 1;
+                    order: 2;
                 }
                 
                 .podium-second .podium-platform {
                     background: linear-gradient(135deg, #c0c0c0 0%, #e5e5e5 50%, #c0c0c0 100%);
                     height: 90px;
-                    width: 120px;
-                    margin: 30px auto 10px;
+                    margin-top: 30px;
                 }
                 
                 .podium-third {
@@ -502,8 +503,7 @@ with tab1:
                 .podium-third .podium-platform {
                     background: linear-gradient(135deg, #cd7f32 0%, #daa520 50%, #cd7f32 100%);
                     height: 70px;
-                    width: 120px;
-                    margin: 50px auto 10px;
+                    margin-top: 50px;
                 }
                 
                 .podium-number {
@@ -879,8 +879,8 @@ with tab1:
             
             # Get podium finishers
             podium_positions = [
+                (st.session_state.finish_order[0], 1, "🥇", "podium-first"),   # 1st place
                 (st.session_state.finish_order[1], 2, "🥈", "podium-second"),  # 2nd place
-                (st.session_state.finish_order[0], 1, "🥇", "podium-first"),   # 1st place (center)
                 (st.session_state.finish_order[2], 3, "🥉", "podium-third")    # 3rd place
             ]
             
