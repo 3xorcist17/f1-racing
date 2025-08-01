@@ -234,6 +234,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 ])
 
 # Tab 1: Enhanced Race and Current Results (Podium) - PROGRESS BARS SECTION ONLY
+# Tab 1: Enhanced Race and Current Results (Podium) - PROGRESS BARS SECTION ONLY
 with tab1:
     # Use full width since no leaderboard
     if st.button("🏁 Start Race"):
@@ -413,7 +414,7 @@ with tab1:
                 font-weight: bold;
             }
             
-            .podium-container {
+            .podium-section {
                 background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
                 border-radius: 20px;
                 padding: 30px;
@@ -423,7 +424,7 @@ with tab1:
                 overflow: hidden;
             }
             
-            .podium-container::before {
+            .podium-section::before {
                 content: '';
                 position: absolute;
                 top: 0;
@@ -445,72 +446,69 @@ with tab1:
                 z-index: 2;
             }
             
-            .podium-steps {
+            .podium-cards-container {
                 display: flex;
                 justify-content: center;
-                align-items: flex-end;
-                gap: 30px;
+                gap: 20px;
+                flex-wrap: wrap;
                 position: relative;
                 z-index: 2;
-                max-width: 800px;
-                margin: 0 auto;
             }
             
-            .podium-step {
+            .podium-card {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 15px;
+                padding: 20px;
+                margin: 10px 0;
+                color: white;
+                box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                min-width: 250px;
                 text-align: center;
                 transition: transform 0.3s ease;
-                width: 200px;
             }
             
-            .podium-step:hover {
+            .podium-card:hover {
                 transform: translateY(-5px);
             }
             
-            .podium-platform {
-                border-radius: 10px 10px 0 0;
-                margin-bottom: 0;
-                position: relative;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-                width: 100%;
-                margin: 0 auto 10px;
+            .podium-card-gold {
+                background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+                color: #000;
+                border: 2px solid rgba(255, 215, 0, 0.5);
+                box-shadow: 0 12px 40px rgba(255, 215, 0, 0.4);
             }
             
-            .podium-first .podium-platform {
-                background: linear-gradient(135deg, #ffd700 0%, #ffed4a 50%, #ffd700 100%);
-                height: 120px;
+            .podium-card-silver {
+                background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+                color: #000;
+                border: 2px solid rgba(192, 192, 192, 0.5);
+                box-shadow: 0 12px 40px rgba(192, 192, 192, 0.4);
             }
             
-            .podium-second .podium-platform {
-                background: linear-gradient(135deg, #c0c0c0 0%, #e5e5e5 50%, #c0c0c0 100%);
-                height: 90px;
-                margin-top: 30px;
+            .podium-card-bronze {
+                background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
+                color: #fff;
+                border: 2px solid rgba(205, 127, 50, 0.5);
+                box-shadow: 0 12px 40px rgba(205, 127, 50, 0.4);
             }
             
-            .podium-third .podium-platform {
-                background: linear-gradient(135deg, #cd7f32 0%, #daa520 50%, #cd7f32 100%);
-                height: 70px;
-                margin-top: 50px;
+            .podium-medal {
+                font-size: 48px;
+                margin-bottom: 15px;
+                display: block;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
             }
             
-            .podium-number {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 36px;
+            .podium-position {
+                font-size: 24px;
                 font-weight: bold;
-                color: rgba(0, 0, 0, 0.8);
-                text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
-            }
-            
-            .podium-driver-info {
-                color: white;
-                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-                margin-top: 10px;
+                margin-bottom: 10px;
             }
             
             .podium-driver-name {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: bold;
                 margin-bottom: 5px;
             }
@@ -520,24 +518,24 @@ with tab1:
                 opacity: 0.9;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
-                margin-bottom: 5px;
+                margin-bottom: 15px;
             }
             
             .podium-points {
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: bold;
                 background: rgba(255, 255, 255, 0.2);
-                padding: 4px 12px;
-                border-radius: 20px;
+                padding: 8px 16px;
+                border-radius: 25px;
                 display: inline-block;
                 backdrop-filter: blur(10px);
+                margin-bottom: 10px;
             }
             
-            .medal-emoji {
-                font-size: 48px;
-                margin-bottom: 10px;
-                display: block;
-                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            .podium-details {
+                font-size: 12px;
+                opacity: 0.8;
+                line-height: 1.4;
             }
             
             .celebration-effects {
@@ -844,39 +842,53 @@ with tab1:
     if st.session_state.race_finished:
         st.markdown("---")
         
-        # ENHANCED PODIUM DISPLAY
+        # ENHANCED PODIUM DISPLAY WITH CARD STYLING
         if len(st.session_state.finish_order) >= 3:
             # Get podium finishers
             podium_positions = [
-                (st.session_state.finish_order[0], 1, "🥇", "podium-first"),   # 1st place
-                (st.session_state.finish_order[1], 2, "🥈", "podium-second"),  # 2nd place
-                (st.session_state.finish_order[2], 3, "🥉", "podium-third")    # 3rd place
+                (st.session_state.finish_order[0], 1, "🥇", "podium-card-gold"),   # 1st place
+                (st.session_state.finish_order[1], 2, "🥈", "podium-card-silver"),  # 2nd place
+                (st.session_state.finish_order[2], 3, "🥉", "podium-card-bronze")    # 3rd place
             ]
             
-            # Build podium steps HTML
-            podium_steps_html = ""
+            # Build podium cards HTML
+            podium_cards_html = ""
             for driver_info, position, medal, css_class in podium_positions:
                 points = points_system.get(position, 0)
                 driver_name = driver_info['driver']
                 team_name = driver_info['team']
                 
-                step_html = f'''
-                <div class="podium-step {css_class}">
-                    <span class="medal-emoji">{medal}</span>
-                    <div class="podium-platform">
-                        <div class="podium-number">{position}</div>
-                    </div>
-                    <div class="podium-driver-info">
-                        <div class="podium-driver-name">{driver_name}</div>
-                        <div class="podium-team-name">{team_name}</div>
-                        <div class="podium-points">{points} points</div>
+                # Calculate additional stats for this driver
+                total_points = st.session_state.total_driver_points[driver_name]
+                total_wins = st.session_state.driver_wins[driver_name]
+                total_podiums = st.session_state.driver_podiums[driver_name]
+                
+                # Position text
+                position_text = ""
+                if position == 1:
+                    position_text = "🏆 RACE WINNER"
+                elif position == 2:
+                    position_text = "🥈 SECOND PLACE"
+                else:
+                    position_text = "🥉 THIRD PLACE"
+                
+                card_html = f'''
+                <div class="podium-card {css_class}">
+                    <span class="podium-medal">{medal}</span>
+                    <div class="podium-position">{position_text}</div>
+                    <div class="podium-driver-name">{driver_name}</div>
+                    <div class="podium-team-name">{team_name}</div>
+                    <div class="podium-points">{points} points this race</div>
+                    <div class="podium-details">
+                        Championship Points: {total_points}<br>
+                        Season Wins: {total_wins} | Season Podiums: {total_podiums}
                     </div>
                 </div>'''
-                podium_steps_html += step_html
+                podium_cards_html += card_html
             
-            # Create complete podium HTML
+            # Create complete podium section HTML
             st.markdown(f'''
-            <div class="podium-container">
+            <div class="podium-section">
                 <div class="celebration-effects">
                     <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
                     <div class="confetti" style="left: 20%; animation-delay: -0.5s;"></div>
@@ -889,8 +901,8 @@ with tab1:
                     <div class="confetti" style="left: 90%; animation-delay: -1.8s;"></div>
                 </div>
                 <div class="podium-title">🏆 RACE PODIUM 🏆</div>
-                <div class="podium-steps">
-                    {podium_steps_html}
+                <div class="podium-cards-container">
+                    {podium_cards_html}
                 </div>
             </div>
             ''', unsafe_allow_html=True)
