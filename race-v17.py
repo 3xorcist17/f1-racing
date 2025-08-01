@@ -1333,10 +1333,14 @@ with tab7:
             )
             
             # Add point values on bars
+            # fig_teams.update_traces(
+            #     text=[f"{points}" for points in team_comp_df["Points"]],
+            #     textposition="outside"
+            # )
             fig_teams.update_traces(
-                text=[f"{points}" for points in team_comp_df["Points"]],
-                textposition="outside"
-            )
+                 texttemplate='%{text}',  # Use template instead of direct text
+                 textposition="outside"
+             )
             
             st.plotly_chart(fig_teams, use_container_width=True)
         
