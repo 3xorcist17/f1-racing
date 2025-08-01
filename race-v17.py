@@ -1219,7 +1219,7 @@ with tab6:
         # st.plotly_chart(fig_ratings, use_container_width=True)
         
         st.markdown("---")
-        st.markdown("#### 🕸️ Top 5 Drivers Performance Radar")
+        # st.markdown("#### 🕸️ Top 5 Drivers Performance Radar")
         if len(driver_ratings) >= 5:
             top_5_drivers = driver_ratings[:5]
             max_points = max([d['points'] for d in top_5_drivers]) if max([d['points'] for d in top_5_drivers]) > 0 else 1
@@ -1254,10 +1254,10 @@ with tab6:
                 paper_bgcolor='rgba(240, 242, 246, 0.95)'
             )
             
-            st.plotly_chart(fig_radar, use_container_width=True)
+            # st.plotly_chart(fig_radar, use_container_width=True)
         
-        st.markdown("---")
-        st.markdown("#### 📊 Rating Distribution")
+        # st.markdown("---")
+        # st.markdown("#### 📊 Rating Distribution")
         fig_hist = px.histogram(
             chart_data,
             x="Rating",
@@ -1275,7 +1275,7 @@ with tab6:
             paper_bgcolor='rgba(240, 242, 246, 0.95)'
         )
         
-        st.plotly_chart(fig_hist, use_container_width=True)
+        # st.plotly_chart(fig_hist, use_container_width=True)
     else:
         st.markdown("#### 🏁 No Data Available")
         st.write("Complete some races to see driver ratings!")
@@ -1729,6 +1729,7 @@ with tab7:
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
