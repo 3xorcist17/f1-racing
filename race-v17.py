@@ -1180,7 +1180,7 @@ with tab6:
         st.markdown('</div>', unsafe_allow_html=True)
         
         st.markdown("---")
-        st.markdown("#### 📈 Driver Ratings Visualization")
+        # st.markdown("#### 📈 Driver Ratings Visualization")
         chart_data = pd.DataFrame([
             {
                 "Driver": f"{d['driver']} ({d['team']})",
@@ -1216,7 +1216,7 @@ with tab6:
             textposition="outside"
         )
         
-        st.plotly_chart(fig_ratings, use_container_width=True)
+        # st.plotly_chart(fig_ratings, use_container_width=True)
         
         st.markdown("---")
         st.markdown("#### 🕸️ Top 5 Drivers Performance Radar")
@@ -1729,5 +1729,6 @@ with tab7:
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
