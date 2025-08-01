@@ -737,7 +737,7 @@ with tab2:
         st.markdown(f'''
         <div class="leaderboard-item {card_class}">
             <span>{row["Position"]}. {row["Driver"]} ({row["Team"]})</span>
-            <span>{row["Total Points"]} pts (vs {row["Teammate"]}: {row["Gap to Teammate"]} pts)</span>
+            <span>{row["Total Points"]} pts</span>
         </div>
         ''', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -1729,3 +1729,4 @@ with tab7:
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+
