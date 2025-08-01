@@ -1218,7 +1218,7 @@ with tab6:
         
         # st.plotly_chart(fig_ratings, use_container_width=True)
         
-        st.markdown("---")
+        # st.markdown("---")
         # st.markdown("#### 🕸️ Top 5 Drivers Performance Radar")
         if len(driver_ratings) >= 5:
             top_5_drivers = driver_ratings[:5]
@@ -1729,6 +1729,7 @@ with tab7:
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
