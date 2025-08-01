@@ -1337,10 +1337,9 @@ with tab7:
             #     text=[f"{points}" for points in team_comp_df["Points"]],
             #     textposition="outside"
             # )
-            fig_teams.update_traces(
-                 texttemplate='%{text}',  # Use template instead of direct text
-                 textposition="outside"
-             )
+            for i, trace in enumerate(fig_teams.data):
+                  trace.text = [str(points) for points in team_comp_df["Points"]]
+                  trace.textposition = "outside"
             
             st.plotly_chart(fig_teams, use_container_width=True)
         
