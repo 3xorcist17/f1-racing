@@ -846,7 +846,33 @@ with tab1:
         
         # ENHANCED PODIUM DISPLAY
         if len(st.session_state.finish_order) >= 3:
-            st.markdown("""
+            # Get podium finishers
+            podium_positions = [
+                (st.session_state.finish_order[0], 1, "🥇", "podium-first"),   # 1st place
+                (st.session_state.finish_order[1], 2, "🥈", "podium-second"),  # 2nd place
+                (st.session_state.finish_order[2], 3, "🥉", "podium-third")    # 3rd place
+            ]
+            
+            # Build complete podium HTML
+            podium_steps_html = ""
+            for driver_info, position, medal, css_class in podium_positions:
+                points = points_system.get(position, 0)
+                podium_steps_html += f"""
+                <div class="podium-step {css_class}">
+                    <span class="medal-emoji">{medal}</span>
+                    <div class="podium-platform">
+                        <div class="podium-number">{position}</div>
+                    </div>
+                    <div class="podium-driver-info">
+                        <div class="podium-driver-name">{driver_info['driver']}</div>
+                        <div class="podium-team-name">{driver_info['team']}</div>
+                        <div class="podium-points">{points} points</div>
+                    </div>
+                </div>
+                """
+            
+            # Render complete podium
+            complete_podium_html = f"""
             <div class="podium-container">
                 <div class="celebration-effects">
                     <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
@@ -861,37 +887,12 @@ with tab1:
                 </div>
                 <div class="podium-title">🏆 RACE PODIUM 🏆</div>
                 <div class="podium-steps">
-            """, unsafe_allow_html=True)
-            
-            # Get podium finishers
-            podium_positions = [
-                (st.session_state.finish_order[0], 1, "🥇", "podium-first"),   # 1st place
-                (st.session_state.finish_order[1], 2, "🥈", "podium-second"),  # 2nd place
-                (st.session_state.finish_order[2], 3, "🥉", "podium-third")    # 3rd place
-            ]
-            
-            for driver_info, position, medal, css_class in podium_positions:
-                points = points_system.get(position, 0)
-                
-                podium_html = f"""
-                <div class="podium-step {css_class}">
-                    <span class="medal-emoji">{medal}</span>
-                    <div class="podium-platform">
-                        <div class="podium-number">{position}</div>
-                    </div>
-                    <div class="podium-driver-info">
-                        <div class="podium-driver-name">{driver_info['driver']}</div>
-                        <div class="podium-team-name">{driver_info['team']}</div>
-                        <div class="podium-points">{points} points</div>
-                    </div>
-                </div>
-                """
-                st.markdown(podium_html, unsafe_allow_html=True)
-            
-            st.markdown("""
+                    {podium_steps_html}
                 </div>
             </div>
-            """, unsafe_allow_html=True)
+            """
+            
+            st.markdown(complete_podium_html, unsafe_allow_html=True)
 
         st.markdown("---")
         st.subheader("🏁 Race Summary")
