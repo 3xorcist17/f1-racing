@@ -1063,7 +1063,7 @@ with tab6:
         base_ratings_df = pd.DataFrame(base_ratings_data)
         st.dataframe(base_ratings_df, use_container_width=True, hide_index=True)
 
-# Tab 7: Season Summary
+# Tab 7: Enhanced Season Summary
 with tab7:
     st.subheader("🏁 Season Summary")
     st.write(f"**Races Completed: {st.session_state.races_completed}**")
@@ -1342,40 +1342,326 @@ with tab7:
         
         st.markdown("---")
         
-        # Season Awards Section
-        st.markdown("### 🏅 Season Awards & Recognition")
+        # 🏅 Expanded Season Awards & Recognition
+        st.markdown("### 🏅 Expanded Season Awards & Recognition")
         
-        if st.session_state.races_completed > 0:
-            award_col1, award_col2, award_col3 = st.columns(3)
+        # Major Awards Section
+        st.markdown("#### 🎖️ Major Awards")
+        
+        award_col1, award_col2, award_col3 = st.columns(3)
+        
+        with award_col1:
+            # Most Race Wins (Gold card)
+            most_wins_driver = max(st.session_state.driver_wins.items(), key=lambda x: x[1])
+            if most_wins_driver[1] > 0:
+                driver_team = next(d['team'] for d in drivers if d['driver'] == most_wins_driver[0])
+                st.markdown(f'''
+                <div class="rating-card rating-card-gold">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🏆 Most Race Wins</div>
+                            <div class="team-name">{most_wins_driver[0]} ({driver_team})</div>
+                        </div>
+                        <div class="rating-score">{most_wins_driver[1]}</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>Win Rate: {(most_wins_driver[1]/st.session_state.races_completed)*100:.1f}%</span>
+                        <span>Total Points: {st.session_state.total_driver_points[most_wins_driver[0]]}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            else:
+                st.markdown(f'''
+                <div class="rating-card rating-card-gold">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🏆 Most Race Wins</div>
+                            <div class="team-name">No wins yet this season</div>
+                        </div>
+                        <div class="rating-score">0</div>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+        
+        with award_col2:
+            # Most Podiums (Silver card)
+            most_podiums_driver = max(st.session_state.driver_podiums.items(), key=lambda x: x[1])
+            if most_podiums_driver[1] > 0:
+                driver_team = next(d['team'] for d in drivers if d['driver'] == most_podiums_driver[0])
+                st.markdown(f'''
+                <div class="rating-card rating-card-silver">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🥇 Most Podiums</div>
+                            <div class="team-name">{most_podiums_driver[0]} ({driver_team})</div>
+                        </div>
+                        <div class="rating-score">{most_podiums_driver[1]}</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>Podium Rate: {(most_podiums_driver[1]/st.session_state.races_completed)*100:.1f}%</span>
+                        <span>Total Points: {st.session_state.total_driver_points[most_podiums_driver[0]]}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            else:
+                st.markdown(f'''
+                <div class="rating-card rating-card-silver">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🥇 Most Podiums</div>
+                            <div class="team-name">No podiums yet this season</div>
+                        </div>
+                        <div class="rating-score">0</div>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+        
+        with award_col3:
+            # Best Constructor (Bronze card)
+            best_constructor = max(st.session_state.total_team_points.items(), key=lambda x: x[1])
+            if best_constructor[1] > 0:
+                st.markdown(f'''
+                <div class="rating-card rating-card-bronze">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🏗️ Best Constructor</div>
+                            <div class="team-name">{best_constructor[0]}</div>
+                        </div>
+                        <div class="rating-score">{best_constructor[1]} pts</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>Wins: {st.session_state.team_wins[best_constructor[0]]}</span>
+                        <span>Podiums: {st.session_state.team_podiums[best_constructor[0]]}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            else:
+                st.markdown(f'''
+                <div class="rating-card rating-card-bronze">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🏗️ Best Constructor</div>
+                            <div class="team-name">No points yet this season</div>
+                        </div>
+                        <div class="rating-score">0 pts</div>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Special Recognition Section
+        st.markdown("#### ⭐ Special Recognition")
+        
+        special_col1, special_col2 = st.columns(2)
+        
+        with special_col1:
+            # Most Consistent - Driver with most points but no wins
+            consistent_driver = None
+            for driver, points in sorted_driver_standings:
+                if st.session_state.driver_wins[driver] == 0 and points > 0:
+                    consistent_driver = driver
+                    break
             
-            with award_col1:
-                st.markdown("#### 🏆 Most Wins")
-                most_wins_driver = max(st.session_state.driver_wins.items(), key=lambda x: x[1])
-                if most_wins_driver[1] > 0:
-                    driver_team = next(d['team'] for d in drivers if d['driver'] == most_wins_driver[0])
-                    st.write(f"**{most_wins_driver[0]}** ({driver_team})")
-                    st.write(f"{most_wins_driver[1]} race wins")
-                else:
-                    st.write("No wins yet")
+            if consistent_driver:
+                driver_team = next(d['team'] for d in drivers if d['driver'] == consistent_driver)
+                consistent_points = st.session_state.total_driver_points[consistent_driver]
+                consistent_podiums = st.session_state.driver_podiums[consistent_driver]
+                
+                st.markdown(f'''
+                <div class="rating-card">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🎯 Most Consistent</div>
+                            <div class="team-name">{consistent_driver} ({driver_team})</div>
+                        </div>
+                        <div class="rating-score">{consistent_points} pts</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>No wins, but {consistent_points} points</span>
+                        <span>Podiums: {consistent_podiums}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            else:
+                st.markdown(f'''
+                <div class="rating-card">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🎯 Most Consistent</div>
+                            <div class="team-name">All scorers have wins!</div>
+                        </div>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
             
-            with award_col2:
-                st.markdown("#### 🥇 Most Podiums")
-                most_podiums_driver = max(st.session_state.driver_podiums.items(), key=lambda x: x[1])
-                if most_podiums_driver[1] > 0:
-                    driver_team = next(d['team'] for d in drivers if d['driver'] == most_podiums_driver[0])
-                    st.write(f"**{most_podiums_driver[0]}** ({driver_team})")
-                    st.write(f"{most_podiums_driver[1]} podium finishes")
-                else:
-                    st.write("No podiums yet")
+            # Most Balanced Team - Team with smallest gap between drivers
+            smallest_gap = float('inf')
+            most_balanced_team = None
             
-            with award_col3:
-                st.markdown("#### 🏗️ Best Constructor")
-                best_constructor = max(st.session_state.total_team_points.items(), key=lambda x: x[1])
-                if best_constructor[1] > 0:
-                    st.write(f"**{best_constructor[0]}**")
-                    st.write(f"{best_constructor[1]} total points")
-                else:
-                    st.write("No points yet")
+            for team, team_drivers in teams_drivers.items():
+                driver1, driver2 = team_drivers
+                driver1_points = st.session_state.total_driver_points[driver1]
+                driver2_points = st.session_state.total_driver_points[driver2]
+                gap = abs(driver1_points - driver2_points)
+                
+                if gap < smallest_gap and (driver1_points > 0 or driver2_points > 0):
+                    smallest_gap = gap
+                    most_balanced_team = team
+            
+            if most_balanced_team:
+                driver1, driver2 = teams_drivers[most_balanced_team]
+                driver1_points = st.session_state.total_driver_points[driver1]
+                driver2_points = st.session_state.total_driver_points[driver2]
+                
+                st.markdown(f'''
+                <div class="rating-card">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🤝 Most Balanced Team</div>
+                            <div class="team-name">{most_balanced_team}</div>
+                        </div>
+                        <div class="rating-score">{smallest_gap} pts gap</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>{driver1}: {driver1_points} pts</span>
+                        <span>{driver2}: {driver2_points} pts</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+        
+        with special_col2:
+            # Best Underdog - Top performer with low upgrade settings
+            best_underdog = None
+            best_underdog_efficiency = 0
+            
+            for driver, points in sorted_driver_standings:
+                if points > 0:
+                    headstart = st.session_state.driver_headstarts.get(driver, 1)
+                    efficiency = points / headstart  # Points per headstart percentage
+                    if efficiency > best_underdog_efficiency:
+                        best_underdog_efficiency = efficiency
+                        best_underdog = driver
+            
+            if best_underdog:
+                driver_team = next(d['team'] for d in drivers if d['driver'] == best_underdog)
+                underdog_points = st.session_state.total_driver_points[best_underdog]
+                underdog_headstart = st.session_state.driver_headstarts.get(best_underdog, 1)
+                
+                st.markdown(f'''
+                <div class="rating-card">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">🌟 Best Underdog</div>
+                            <div class="team-name">{best_underdog} ({driver_team})</div>
+                        </div>
+                        <div class="rating-score">{best_underdog_efficiency:.1f}</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>{underdog_points} pts with {underdog_headstart}% headstart</span>
+                        <span>Efficiency: {best_underdog_efficiency:.1f} pts/headstart%</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            
+            # Speed Demon - Best points-to-headstart efficiency
+            speed_demon = None
+            best_efficiency = 0
+            
+            for driver, points in sorted_driver_standings:
+                if points > 0:
+                    headstart = st.session_state.driver_headstarts.get(driver, 1)
+                    efficiency = points / headstart
+                    if efficiency > best_efficiency:
+                        best_efficiency = efficiency
+                        speed_demon = driver
+            
+            if speed_demon:
+                driver_team = next(d['team'] for d in drivers if d['driver'] == speed_demon)
+                demon_points = st.session_state.total_driver_points[speed_demon]
+                demon_headstart = st.session_state.driver_headstarts.get(speed_demon, 1)
+                
+                st.markdown(f'''
+                <div class="rating-card">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">⚡ Speed Demon</div>
+                            <div class="team-name">{speed_demon} ({driver_team})</div>
+                        </div>
+                        <div class="rating-score">{best_efficiency:.1f}</div>
+                    </div>
+                    <div class="rating-details">
+                        <span>Best points-to-headstart ratio</span>
+                        <span>{demon_points} pts / {demon_headstart}% = {best_efficiency:.1f}</span>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+        
+        st.markdown("---")
+        
+        # Fun Statistics Section
+        st.markdown("#### 📊 Fun Statistics")
+        
+        fun_col1, fun_col2 = st.columns(2)
+        
+        with fun_col1:
+            # Most Podium Appearances
+            total_podium_appearances = sum(st.session_state.driver_podiums.values())
+            
+            # Different Race Winners count
+            different_winners = sum(1 for wins in st.session_state.driver_wins.values() if wins > 0)
+            
+            st.markdown("**📊 Most Podium Appearances**")
+            if total_podium_appearances > 0:
+                st.write(f"Total podium appearances across all drivers: **{total_podium_appearances}**")
+                st.write(f"Average podiums per race: **{total_podium_appearances/st.session_state.races_completed:.1f}**")
+            else:
+                st.write("No podium appearances yet!")
+            
+            st.markdown("")
+            st.markdown("**🏆 Different Race Winners**")
+            if different_winners > 0:
+                st.write(f"Number of different race winners: **{different_winners}**")
+                winner_diversity = (different_winners / st.session_state.races_completed) * 100
+                st.write(f"Winner diversity: **{winner_diversity:.1f}%**")
+            else:
+                st.write("No race winners yet!")
+        
+        with fun_col2:
+            # Most Dominant Team
+            most_dominant_team = None
+            highest_team_percentage = 0
+            
+            if total_points_awarded > 0:
+                for team, points in sorted_team_standings:
+                    team_percentage = (points / total_points_awarded) * 100
+                    if team_percentage > highest_team_percentage:
+                        highest_team_percentage = team_percentage
+                        most_dominant_team = team
+            
+            st.markdown("**👑 Most Dominant Team**")
+            if most_dominant_team:
+                st.write(f"**{most_dominant_team}** - {highest_team_percentage:.1f}% of all points")
+                st.write(f"Points: {st.session_state.total_team_points[most_dominant_team]} / {total_points_awarded}")
+            else:
+                st.write("No dominant team yet!")
+            
+            st.markdown("")
+            st.markdown("**📈 Championship Gap**")
+            if len(sorted_driver_standings) >= 2:
+                leader_points = sorted_driver_standings[0][1]
+                last_points = sorted_driver_standings[-1][1]
+                championship_gap = leader_points - last_points
+                
+                st.write(f"Gap between 1st and last: **{championship_gap} points**")
+                
+                # Gap between 1st and 2nd
+                if len(sorted_driver_standings) >= 2:
+                    second_points = sorted_driver_standings[1][1]
+                    leader_gap = leader_points - second_points
+                    st.write(f"Gap between 1st and 2nd: **{leader_gap} points**")
+            else:
+                st.write("Need more data for championship gaps!")
     
     else:
         st.markdown("### 🏁 No Season Data Available")
@@ -1389,5 +1675,6 @@ with tab7:
         st.write("- 🏆 Championship leaders with beautiful cards")
         st.write("- 📈 Points progression charts")
         st.write("- 🏁 Race winners summary")
-        st.write("- 🏅 Season awards and recognition")
-        st.write("- 📊 Comprehensive statistics overview")
+        st.write("- 🏅 Major awards (Most Wins, Most Podiums, Best Constructor)")
+        st.write("- ⭐ Special recognition (Most Consistent, Best Underdog, etc.)")
+        st.write("- 📊 Fun statistics and comprehensive analysis")
