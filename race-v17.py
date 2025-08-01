@@ -732,20 +732,20 @@ with tab1:
             st.write("No races completed yet.")
 
     # UP system
-    if len(st.session_state.finish_order) == 20:
-        # ... (existing points and statistics update)
-        # Award Upgrade Points
-        if 'total_upgrade_points' not in st.session_state:
-            st.session_state.total_upgrade_points = 0
-        for driver_info in st.session_state.finish_order:
-            driver = driver_info['driver']
-            points = st.session_state.total_driver_points[driver]
-            wins = st.session_state.driver_wins[driver]
-            podiums = st.session_state.driver_podiums[driver]
-            # Award UP: points/10 + 5*wi
-            upgrade_points = (points // 10) + (wins * 5) + (podiums * 3)
-            st.session_state.total_upgrade_points += upgrade_points
-        # ... (rest of Tab 1 code)
+    # if len(st.session_state.finish_order) == 20:
+    #     # ... (existing points and statistics update)
+    #     # Award Upgrade Points
+    #     if 'total_upgrade_points' not in st.session_state:
+    #         st.session_state.total_upgrade_points = 0
+    #     for driver_info in st.session_state.finish_order:
+    #         driver = driver_info['driver']
+    #         points = st.session_state.total_driver_points[driver]
+    #         wins = st.session_state.driver_wins[driver]
+    #         podiums = st.session_state.driver_podiums[driver]
+    #         # Award UP: points/10 + 5*wi
+    #         upgrade_points = (points // 10) + (wins * 5) + (podiums * 3)
+    #         st.session_state.total_upgrade_points += upgrade_points
+    #     # ... (rest of Tab 1 code)
 
 # Tab 2: Drivers' Championship Standings and Chart
 with tab2:
@@ -2193,3 +2193,4 @@ with tab7:
         st.write("- 🏅 Major awards (Most Wins, Most Podiums, Best Constructor)")
         st.write("- ⭐ Special recognition (Most Consistent, Best Underdog, etc.)")
         st.write("- 📊 Fun statistics and comprehensive analysis")
+
