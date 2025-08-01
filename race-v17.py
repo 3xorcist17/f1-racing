@@ -51,17 +51,17 @@ st.markdown("""
     
     .rating-card-gold {
         background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-        color: #000000;;
+        color: #000000;
     }
     
     .rating-card-silver {
         background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
-        color: #000000;;
+        color: #000000;
     }
     
     .rating-card-bronze {
         background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
-        color: #000000;;
+        color: #000000;
     }
     
     .rating-header {
