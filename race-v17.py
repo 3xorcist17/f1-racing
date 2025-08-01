@@ -235,7 +235,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 
 # Tab 1: Enhanced Race and Current Results (Podium) - PROGRESS BARS SECTION ONLY
 with tab1:
-    col1, col2 = st.columns([5, 1])  # Adjusted column ratio since no leaderboard
+    col1, col2 = st.columns([7, 1])  # Adjusted column ratio since no leaderboard
     
     with col1:
         if st.button("🏁 Start Race"):
