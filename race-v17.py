@@ -235,7 +235,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 
 # Tab 1: Enhanced Race and Current Results (Podium) - PROGRESS BARS SECTION ONLY
 with tab1:
-    col1, col2 = st.columns([2, 1])
+    col1, col2 = st.columns([3, 1])  # Adjusted column ratio since no leaderboard
     
     with col1:
         if st.button("🏁 Start Race"):
@@ -414,6 +414,190 @@ with tab1:
                     font-size: 10px;
                     font-weight: bold;
                 }
+                
+                /* PODIUM STYLES */
+                .podium-container {
+                    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+                    border-radius: 20px;
+                    padding: 30px;
+                    margin: 20px 0;
+                    box-shadow: 0 15px 35px rgba(30, 60, 114, 0.4);
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .podium-container::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="checkered" patternUnits="userSpaceOnUse" width="10" height="10"><rect width="5" height="5" fill="rgba(255,255,255,0.03)"/><rect x="5" y="5" width="5" height="5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23checkered)"/></svg>');
+                    opacity: 0.1;
+                }
+                
+                .podium-title {
+                    text-align: center;
+                    color: white;
+                    font-size: 28px;
+                    font-weight: bold;
+                    margin-bottom: 30px;
+                    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .podium-steps {
+                    display: flex;
+                    justify-content: center;
+                    align-items: flex-end;
+                    gap: 10px;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .podium-step {
+                    text-align: center;
+                    transition: transform 0.3s ease;
+                }
+                
+                .podium-step:hover {
+                    transform: translateY(-5px);
+                }
+                
+                .podium-platform {
+                    border-radius: 10px 10px 0 0;
+                    margin-bottom: 0;
+                    position: relative;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                }
+                
+                .podium-first {
+                    order: 2;
+                }
+                
+                .podium-first .podium-platform {
+                    background: linear-gradient(135deg, #ffd700 0%, #ffed4a 50%, #ffd700 100%);
+                    height: 120px;
+                    width: 140px;
+                    margin: 0 auto 10px;
+                }
+                
+                .podium-second {
+                    order: 1;
+                }
+                
+                .podium-second .podium-platform {
+                    background: linear-gradient(135deg, #c0c0c0 0%, #e5e5e5 50%, #c0c0c0 100%);
+                    height: 90px;
+                    width: 120px;
+                    margin: 30px auto 10px;
+                }
+                
+                .podium-third {
+                    order: 3;
+                }
+                
+                .podium-third .podium-platform {
+                    background: linear-gradient(135deg, #cd7f32 0%, #daa520 50%, #cd7f32 100%);
+                    height: 70px;
+                    width: 120px;
+                    margin: 50px auto 10px;
+                }
+                
+                .podium-number {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 36px;
+                    font-weight: bold;
+                    color: rgba(0, 0, 0, 0.8);
+                    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+                }
+                
+                .podium-driver-info {
+                    color: white;
+                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+                    margin-top: 10px;
+                }
+                
+                .podium-driver-name {
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+                
+                .podium-team-name {
+                    font-size: 14px;
+                    opacity: 0.9;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 5px;
+                }
+                
+                .podium-points {
+                    font-size: 14px;
+                    font-weight: bold;
+                    background: rgba(255, 255, 255, 0.2);
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    display: inline-block;
+                    backdrop-filter: blur(10px);
+                }
+                
+                .medal-emoji {
+                    font-size: 48px;
+                    margin-bottom: 10px;
+                    display: block;
+                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+                }
+                
+                .celebration-effects {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    pointer-events: none;
+                    overflow: hidden;
+                }
+                
+                .confetti {
+                    position: absolute;
+                    width: 6px;
+                    height: 6px;
+                    background: #ffd700;
+                    animation: confetti-fall 3s linear infinite;
+                    border-radius: 50%;
+                }
+                
+                .confetti:nth-child(odd) {
+                    background: #ff6b6b;
+                    animation-delay: -1s;
+                }
+                
+                .confetti:nth-child(3n) {
+                    background: #4ecdc4;
+                    animation-delay: -2s;
+                }
+                
+                .confetti:nth-child(4n) {
+                    background: #45b7d1;
+                    animation-delay: -0.5s;
+                }
+                
+                @keyframes confetti-fall {
+                    0% {
+                        transform: translateY(-100vh) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(100vh) rotate(360deg);
+                        opacity: 0;
+                    }
+                }
                 </style>
             """, unsafe_allow_html=True)
             
@@ -499,49 +683,6 @@ with tab1:
                 progress_placeholders.append((placeholder, driver_info))
             
             st.markdown('</div>', unsafe_allow_html=True)
-
-            leaderboard_placeholder = col2.empty()
-            
-            # Display initial leaderboard
-            with leaderboard_placeholder.container():
-                st.markdown("### 🏁 Live Leaderboard")
-                st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
-                
-                for pos, driver_info in enumerate(current_leaderboard, 1):
-                    progress = driver_info['progress']
-                    driver = driver_info['driver']
-                    team = driver_info['team']
-                    is_finished = driver_info.get('finished', False)
-                    
-                    position_class = ""
-                    medal = ""
-                    if pos == 1:
-                        position_class = "position-1"
-                        medal = "🥇 "
-                    elif pos == 2:
-                        position_class = "position-2"
-                        medal = "🥈 "
-                    elif pos == 3:
-                        position_class = "position-3"
-                        medal = "🥉 "
-                    
-                    if is_finished:
-                        progress_display = "FINISHED"
-                        if st.session_state.race_finished:
-                            points = points_system.get(pos, 0)
-                            if pos <= 10:
-                                progress_display = f"FINISHED ({points} pts)"
-                    else:
-                        progress_display = f"{progress:.1f}%"
-                    
-                    st.markdown(f'''
-                    <div class="leaderboard-item {position_class}">
-                        <span><strong>{medal}P{pos}: {driver}</strong> ({team})</span>
-                        <span><strong>{progress_display}</strong></span>
-                    </div>
-                    ''', unsafe_allow_html=True)
-                
-                st.markdown('</div>', unsafe_allow_html=True)
 
             # Brief pause to show initial headstarts
             time.sleep(1)
@@ -638,43 +779,6 @@ with tab1:
                         
                         placeholder.markdown(progress_html, unsafe_allow_html=True)
                 
-                # Update leaderboard (existing code continues...)
-                with leaderboard_placeholder.container():
-                    st.markdown("### 🏁 Live Leaderboard")
-                    st.markdown('<div class="leaderboard">', unsafe_allow_html=True)
-                    
-                    for pos, driver_info in enumerate(current_leaderboard, 1):
-                        progress = driver_info['progress']
-                        driver = driver_info['driver']
-                        team = driver_info['team']
-                        is_finished = driver_info.get('finished', False)
-                        
-                        position_class = ""
-                        medal = ""
-                        if pos == 1:
-                            position_class = "position-1"
-                            medal = "🥇 "
-                        elif pos == 2:
-                            position_class = "position-2"
-                            medal = "🥈 "
-                        elif pos == 3:
-                            position_class = "position-3"
-                            medal = "🥉 "
-                        
-                        if is_finished:
-                            progress_display = "🏁 FINISHED"
-                        else:
-                            progress_display = f"{progress:.1f}%"
-                        
-                        st.markdown(f'''
-                        <div class="leaderboard-item {position_class}">
-                            <span><strong>{medal}P{pos}: {driver}</strong> ({team})</span>
-                            <span><strong>{progress_display}</strong></span>
-                        </div>
-                        ''', unsafe_allow_html=True)
-                    
-                    st.markdown('</div>', unsafe_allow_html=True)
-                
                 if len(st.session_state.finish_order) == 20:
                     st.session_state.race_finished = True
                     st.session_state.races_completed += 1
@@ -726,7 +830,7 @@ with tab1:
                             
                             placeholder.markdown(progress_html, unsafe_allow_html=True)
                     
-                    # Update points and statistics (existing code...)
+                    # Update points and statistics
                     for position, driver_info in enumerate(st.session_state.finish_order, 1):
                         if position <= 10:
                             points = points_system.get(position, 0)
@@ -751,23 +855,56 @@ with tab1:
                 
                 time.sleep(1)
 
-    with col2:
-        if not st.session_state.race_started and not st.session_state.race_finished:
-            st.markdown("### 🏁 Leaderboard")
-
     if st.session_state.race_finished:
         st.markdown("---")
-        st.subheader("🏆 Podium")
-        for position, driver_info in enumerate(st.session_state.finish_order, 1):
-            points = points_system.get(position, 0)
-            driver = driver_info['driver']
-            team = driver_info['team']
-            if position == 1:
-                st.write(f"🥇 **P1: {driver} ({team})** - {points} points")
-            elif position == 2:
-                st.write(f"🥈 **P2: {driver} ({team})** - {points} points")
-            elif position == 3:
-                st.write(f"🥉 **P3: {driver} ({team})** - {points} points")
+        
+        # ENHANCED PODIUM DISPLAY
+        if len(st.session_state.finish_order) >= 3:
+            st.markdown("""
+            <div class="podium-container">
+                <div class="celebration-effects">
+                    <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
+                    <div class="confetti" style="left: 20%; animation-delay: -0.5s;"></div>
+                    <div class="confetti" style="left: 30%; animation-delay: -1s;"></div>
+                    <div class="confetti" style="left: 40%; animation-delay: -1.5s;"></div>
+                    <div class="confetti" style="left: 50%; animation-delay: -2s;"></div>
+                    <div class="confetti" style="left: 60%; animation-delay: -2.5s;"></div>
+                    <div class="confetti" style="left: 70%; animation-delay: -3s;"></div>
+                    <div class="confetti" style="left: 80%; animation-delay: -0.3s;"></div>
+                    <div class="confetti" style="left: 90%; animation-delay: -1.8s;"></div>
+                </div>
+                <div class="podium-title">🏆 RACE PODIUM 🏆</div>
+                <div class="podium-steps">
+            """, unsafe_allow_html=True)
+            
+            # Get podium finishers
+            podium_positions = [
+                (st.session_state.finish_order[1], 2, "🥈", "podium-second"),  # 2nd place
+                (st.session_state.finish_order[0], 1, "🥇", "podium-first"),   # 1st place (center)
+                (st.session_state.finish_order[2], 3, "🥉", "podium-third")    # 3rd place
+            ]
+            
+            for driver_info, position, medal, css_class in podium_positions:
+                points = points_system.get(position, 0)
+                
+                st.markdown(f"""
+                <div class="podium-step {css_class}">
+                    <span class="medal-emoji">{medal}</span>
+                    <div class="podium-platform">
+                        <div class="podium-number">{position}</div>
+                    </div>
+                    <div class="podium-driver-info">
+                        <div class="podium-driver-name">{driver_info['driver']}</div>
+                        <div class="podium-team-name">{driver_info['team']}</div>
+                        <div class="podium-points">{points} points</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            st.markdown("""
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.markdown("---")
         st.subheader("🏁 Race Summary")
