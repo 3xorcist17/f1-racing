@@ -949,20 +949,20 @@ with tab3:
                 driver1_points = st.session_state.total_driver_points[driver1]
                 driver2_points = st.session_state.total_driver_points[driver2]
                 
-                st.markdown(f'''
-                <div class="rating-card">
-                    <div class="rating-header">
-                        <div>
-                            <div class="driver-name">{team}</div>
-                            <div class="team-name">Total: {team_points} pts</div>
-                        </div>
-                    </div>
-                    <div class="rating-details">
-                        <span style="color: {driver_colors[driver1]}">{driver1}: {driver1_points} pts</span>
-                        <span style="color: {driver_colors[driver2]}">{driver2}: {driver2_points} pts</span>
-                    </div>
-                </div>
-                ''', unsafe_allow_html=True)
+                # st.markdown(f'''
+                # <div class="rating-card">
+                #     <div class="rating-header">
+                #         <div>
+                #             <div class="driver-name">{team}</div>
+                #             <div class="team-name">Total: {team_points} pts</div>
+                #         </div>
+                #     </div>
+                #     <div class="rating-details">
+                #         <span style="color: {driver_colors[driver1]}">{driver1}: {driver1_points} pts</span>
+                #         <span style="color: {driver_colors[driver2]}">{driver2}: {driver2_points} pts</span>
+                #     </div>
+                # </div>
+                # ''', unsafe_allow_html=True)
                 
                 team_contribution_data.append({
                     "Team": team,
@@ -1729,3 +1729,4 @@ with tab7:
         st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
+
