@@ -414,174 +414,7 @@ with tab1:
                 font-weight: bold;
             }
             
-            .podium-section {
-                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
-                border-radius: 20px;
-                padding: 30px;
-                margin: 20px 0;
-                box-shadow: 0 15px 35px rgba(30, 60, 114, 0.4);
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .podium-section::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="checkered" patternUnits="userSpaceOnUse" width="10" height="10"><rect width="5" height="5" fill="rgba(255,255,255,0.03)"/><rect x="5" y="5" width="5" height="5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23checkered)"/></svg>');
-                opacity: 0.1;
-            }
-            
-            .podium-title {
-                text-align: center;
-                color: white;
-                font-size: 28px;
-                font-weight: bold;
-                margin-bottom: 30px;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-                position: relative;
-                z-index: 2;
-            }
-            
-            .podium-cards-container {
-                display: flex;
-                justify-content: center;
-                gap: 20px;
-                flex-wrap: wrap;
-                position: relative;
-                z-index: 2;
-            }
-            
-            .podium-card {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-radius: 15px;
-                padding: 20px;
-                margin: 10px 0;
-                color: white;
-                box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                min-width: 250px;
-                text-align: center;
-                transition: transform 0.3s ease;
-            }
-            
-            .podium-card:hover {
-                transform: translateY(-5px);
-            }
-            
-            .podium-card-gold {
-                background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-                color: #000;
-                border: 2px solid rgba(255, 215, 0, 0.5);
-                box-shadow: 0 12px 40px rgba(255, 215, 0, 0.4);
-            }
-            
-            .podium-card-silver {
-                background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
-                color: #000;
-                border: 2px solid rgba(192, 192, 192, 0.5);
-                box-shadow: 0 12px 40px rgba(192, 192, 192, 0.4);
-            }
-            
-            .podium-card-bronze {
-                background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
-                color: #fff;
-                border: 2px solid rgba(205, 127, 50, 0.5);
-                box-shadow: 0 12px 40px rgba(205, 127, 50, 0.4);
-            }
-            
-            .podium-medal {
-                font-size: 48px;
-                margin-bottom: 15px;
-                display: block;
-                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-            }
-            
-            .podium-position {
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            
-            .podium-driver-name {
-                font-size: 20px;
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            
-            .podium-team-name {
-                font-size: 14px;
-                opacity: 0.9;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 15px;
-            }
-            
-            .podium-points {
-                font-size: 16px;
-                font-weight: bold;
-                background: rgba(255, 255, 255, 0.2);
-                padding: 8px 16px;
-                border-radius: 25px;
-                display: inline-block;
-                backdrop-filter: blur(10px);
-                margin-bottom: 10px;
-            }
-            
-            .podium-details {
-                font-size: 12px;
-                opacity: 0.8;
-                line-height: 1.4;
-            }
-            
-            .celebration-effects {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                pointer-events: none;
-                overflow: hidden;
-            }
-            
-            .confetti {
-                position: absolute;
-                width: 6px;
-                height: 6px;
-                background: #ffd700;
-                animation: confetti-fall 3s linear infinite;
-                border-radius: 50%;
-            }
-            
-            .confetti:nth-child(odd) {
-                background: #ff6b6b;
-                animation-delay: -1s;
-            }
-            
-            .confetti:nth-child(3n) {
-                background: #4ecdc4;
-                animation-delay: -2s;
-            }
-            
-            .confetti:nth-child(4n) {
-                background: #45b7d1;
-                animation-delay: -0.5s;
-            }
-            
-            @keyframes confetti-fall {
-                0% {
-                    transform: translateY(-100vh) rotate(0deg);
-                    opacity: 1;
-                }
-                100% {
-                    transform: translateY(100vh) rotate(360deg);
-                    opacity: 0;
-                }
-            }
+
             </style>
         """, unsafe_allow_html=True)
         
@@ -842,18 +675,18 @@ with tab1:
     if st.session_state.race_finished:
         st.markdown("---")
         
-        # ENHANCED PODIUM DISPLAY WITH CARD STYLING
+        # ENHANCED PODIUM DISPLAY - EXACT SAME STYLING AS DRIVER RATINGS
         if len(st.session_state.finish_order) >= 3:
-            # Get podium finishers
+            st.markdown("### 🏆 Race Podium")
+            
+            # Get podium finishers with exact same styling as ratings
             podium_positions = [
-                (st.session_state.finish_order[0], 1, "🥇", "podium-card-gold"),   # 1st place
-                (st.session_state.finish_order[1], 2, "🥈", "podium-card-silver"),  # 2nd place
-                (st.session_state.finish_order[2], 3, "🥉", "podium-card-bronze")    # 3rd place
+                (st.session_state.finish_order[0], 1, "🥇", "rating-card-gold", "1st"),
+                (st.session_state.finish_order[1], 2, "🥈", "rating-card-silver", "2nd"),
+                (st.session_state.finish_order[2], 3, "🥉", "rating-card-bronze", "3rd")
             ]
             
-            # Build podium cards HTML
-            podium_cards_html = ""
-            for driver_info, position, medal, css_class in podium_positions:
+            for driver_info, position, medal, card_class, position_text in podium_positions:
                 points = points_system.get(position, 0)
                 driver_name = driver_info['driver']
                 team_name = driver_info['team']
@@ -863,49 +696,22 @@ with tab1:
                 total_wins = st.session_state.driver_wins[driver_name]
                 total_podiums = st.session_state.driver_podiums[driver_name]
                 
-                # Position text
-                position_text = ""
-                if position == 1:
-                    position_text = "🏆 RACE WINNER"
-                elif position == 2:
-                    position_text = "🥈 SECOND PLACE"
-                else:
-                    position_text = "🥉 THIRD PLACE"
-                
-                card_html = f'''
-                <div class="podium-card {css_class}">
-                    <span class="podium-medal">{medal}</span>
-                    <div class="podium-position">{position_text}</div>
-                    <div class="podium-driver-name">{driver_name}</div>
-                    <div class="podium-team-name">{team_name}</div>
-                    <div class="podium-points">{points} points this race</div>
-                    <div class="podium-details">
-                        Championship Points: {total_points}<br>
-                        Season Wins: {total_wins} | Season Podiums: {total_podiums}
+                st.markdown(f'''
+                <div class="rating-card {card_class}">
+                    <div class="rating-header">
+                        <div>
+                            <div class="driver-name">{medal} {position_text} - {driver_name}</div>
+                            <div class="team-name">{team_name}</div>
+                        </div>
+                        <div class="rating-score">{points} pts</div>
                     </div>
-                </div>'''
-                podium_cards_html += card_html
-            
-            # Create complete podium section HTML
-            st.markdown(f'''
-            <div class="podium-section">
-                <div class="celebration-effects">
-                    <div class="confetti" style="left: 10%; animation-delay: 0s;"></div>
-                    <div class="confetti" style="left: 20%; animation-delay: -0.5s;"></div>
-                    <div class="confetti" style="left: 30%; animation-delay: -1s;"></div>
-                    <div class="confetti" style="left: 40%; animation-delay: -1.5s;"></div>
-                    <div class="confetti" style="left: 50%; animation-delay: -2s;"></div>
-                    <div class="confetti" style="left: 60%; animation-delay: -2.5s;"></div>
-                    <div class="confetti" style="left: 70%; animation-delay: -3s;"></div>
-                    <div class="confetti" style="left: 80%; animation-delay: -0.3s;"></div>
-                    <div class="confetti" style="left: 90%; animation-delay: -1.8s;"></div>
+                    <div class="rating-details">
+                        <span>Championship: {total_points} pts</span>
+                        <span>Wins: {total_wins}</span>
+                        <span>Podiums: {total_podiums}</span>
+                    </div>
                 </div>
-                <div class="podium-title">🏆 RACE PODIUM 🏆</div>
-                <div class="podium-cards-container">
-                    {podium_cards_html}
-                </div>
-            </div>
-            ''', unsafe_allow_html=True)
+                ''', unsafe_allow_html=True)
 
         st.markdown("---")
         st.subheader("🏁 Race Summary")
