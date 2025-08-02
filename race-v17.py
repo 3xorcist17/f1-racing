@@ -2402,6 +2402,65 @@ with tab6:
     
     st.markdown('</div>', unsafe_allow_html=True)
 
+    
+    st.markdown("---")
+    # Mr. Reliable (Green)
+    st.write("#### 🌟 Mr. Reliable")
+    st.write("**Driver with most points without a race win**")
+    
+
+    # Rising Star (Orange)
+    st.write("#### 🌱 Rising Star") 
+    st.write("**Best performing driver with under 50 points**")
+    
+
+    # Giant Killer (Red)
+    st.write("#### 🗡️ Giant Killer")
+    st.write("**Lower headstart driver who beats favored teammate**") 
+    
+
+    # Comeback King (Yellow)
+    st.write("#### 👑 Comeback King")
+    st.write("**Driver with highest podium finish score**")
+    
+
+    # Speed Demon (Pink-Red)
+    st.write("#### 💨 Speed Demon")
+    st.write("**High headstart driver (≥7%) who still delivers 20+ points**")
+    
+    # Dark Horse (Dark Blue)
+    st.write("#### 🐎 Dark Horse")
+    st.write("**Surprising performer with low expectations (≤3% headstart)**")
+    
+    # Veteran Excellence (Purple)
+    st.write("#### 🎖️ Veteran Excellence")
+    st.write("**Consistent top performer (2nd-6th place in championship)**")
+    
+
+    # Lucky Charm (Cyan)
+    st.write("#### 🍀 Lucky Charm")
+    st.write("**Driver with 15+ points, 0 wins, and ≤1 podium**")
+
+    # Perfect Storm (Pink)
+    st.write("#### ⛈️ Perfect Storm")
+    st.write("**Team with both drivers scoring 20+ points and 60+ team total**")
+
+    # Overachiever (Light Blue)
+    st.write("#### 🚀 Overachiever")
+    st.write("**Best points-to-headstart percentage ratio**")
+
+    # Breakthrough Driver (Red-Orange)
+    st.write("#### 💥 Breakthrough Driver")
+    st.write("**First unique race winner of the season**")
+
+    # Team Harmony (Orange)
+    st.write("#### 🎵 Team Harmony")
+    st.write("**Team with most balanced driver point distribution**")
+
+    # Championship Contender (Purple)
+    st.write("#### 🏁 Championship Contender")
+    st.write("**Top 5 driver with 25+ points and 2+ podiums**")
+
 #     New Awards Added:
 
 # Mr. Reliable (Green) - Consistent points without wins
