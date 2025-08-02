@@ -40,7 +40,7 @@ st.markdown("""
     .position-3 { border-left-color: #CD7F32; }
     
     .race-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #e74c3c 0%, #000000 100%);
         border-radius: 15px;
         padding: 20px;
         margin: 10px 0;
@@ -49,7 +49,7 @@ st.markdown("""
     }
     
     .rating-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #e74c3c 0%, #000000 100%);
         border-radius: 15px;
         padding: 20px;
         margin: 10px 0;
