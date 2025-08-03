@@ -736,7 +736,7 @@ with tab2:
         st.markdown(f'''
         <div class="leaderboard-item {card_class}">
             <span>{row["Position"]}. {row["Driver"]} ({row["Team"]})</span>
-            <span>{row["Total Points"]} pts (vs {row["Teammate"]}: {row["Gap to Teammate"]} pts)</span>
+            <span>{row["Total Points"]} pts</span>
         </div>
         ''', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -2476,3 +2476,4 @@ with tab6:
 # Breakthrough Driver (Red-Orange) - First unique winner
 # Team Harmony (Orange) - Most balanced teammate performance
 # Championship Contender (Purple) - Top championship potential
+
