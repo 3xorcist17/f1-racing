@@ -767,15 +767,15 @@ with tab2:
                 marker_line_width=3,
                 marker_line_color="rgba(0,0,0,0.4)",
                 textfont=dict(size=12, color="black"),
-                hovertemplate="%{customdata[1]}<br>" +
-                              "Points: %{x}<br>" +
-                              "Team: %{customdata[3]}<br>" +
-                              "Wins: %{customdata[0]}<br>" +
-                              "Podiums: %{customdata[1]}<br>" +
-                              "Gap to Leader: %{customdata[2]} pts<br>" +
-                              "<extra></extra>",
-                customdata=driver_df_chart[['Wins', 'Podiums', 'Championship_Gap', 'Team']].values
-            )
+            #     hovertemplate="%{customdata[1]}<br>" +
+            #                   "Points: %{x}<br>" +
+            #                   "Team: %{customdata[3]}<br>" +
+            #                   "Wins: %{customdata[0]}<br>" +
+            #                   "Podiums: %{customdata[1]}<br>" +
+            #                   "Gap to Leader: %{customdata[2]} pts<br>" +
+            #                   "<extra></extra>",
+            #     customdata=driver_df_chart[['Wins', 'Podiums', 'Championship_Gap', 'Team']].values
+            # )
             
             # Enhanced layout with better proportions and styling - DEFAULT FONT
             fig.update_layout(
@@ -2769,6 +2769,7 @@ with tab6:
 # Breakthrough Driver (Red-Orange) - First unique winner
 # Team Harmony (Orange) - Most balanced teammate performance
 # Championship Contender (Purple) - Top championship potential
+
 
 
 
