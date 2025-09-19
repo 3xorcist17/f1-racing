@@ -251,7 +251,7 @@ st.markdown("""
 
 # Team and driver data (unchanged from original)
 teams_drivers = {
-    "Alpine": ["Gas", "Col"],
+    "Alpine": ["Gas", "Doo"],
     "Aston Martin": ["Alo", "Str"],
     "Ferrari": ["Lec", "Ham"],
     "Haas": ["Oco", "Bea"],
@@ -725,13 +725,13 @@ with tab2:
         st.markdown("---")
         
         # Championship Battle Visualization
-        col1, col2 = st.columns([2, 1])
+        col1, col2 = st.columns([3, 1])
         
         with col1:
             st.markdown("#### 📊 Championship Battle")
             
             # Top 10 drivers bar chart with enhanced styling
-            top_10_drivers = sorted_driver_standings[:10]
+            top_10_drivers = sorted_driver_standings[:20]
             driver_chart_data = []
             for pos, (driver, points) in enumerate(top_10_drivers, 1):
                 team = next(d['team'] for d in drivers if d['driver'] == driver)
@@ -756,7 +756,7 @@ with tab2:
                     text="Points",
                     color_discrete_map=team_colors,
                     orientation='h',
-                    title="Championship Standings - Top 10 Drivers"
+                    title="Championship Standings"
                 )
                 
                 # Enhanced styling
