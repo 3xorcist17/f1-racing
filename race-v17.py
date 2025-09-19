@@ -757,14 +757,7 @@ with tab2:
                 text="Points",
                 color_discrete_map=team_colors,
                 orientation='h',
-                title="Championship Standings - Points Battle",
-                hover_data={
-                    'Wins': True,
-                    'Podiums': True, 
-                    'Championship_Gap': True,
-                    'Team': True,
-                    'Points': True
-                }
+                title="Championship Standings - Points Battle"
             )
             
             # Enhanced styling with better layout - DEFAULT FONT
@@ -2776,5 +2769,6 @@ with tab6:
 # Breakthrough Driver (Red-Orange) - First unique winner
 # Team Harmony (Orange) - Most balanced teammate performance
 # Championship Contender (Purple) - Top championship potential
+
 
 
