@@ -724,74 +724,155 @@ with tab2:
         
         st.markdown("---")
         
-        # Championship Battle Visualization
-        col1, col2 = st.columns([3, 1])
+        # Championship Battle Visualization - ENHANCED STYLING
+        st.markdown("#### 📊 Championship Battle")
         
-        with col1:
-            st.markdown("#### 📊 Championship Battle")
+        # Create enhanced horizontal bar chart
+        top_drivers = sorted_driver_standings[:20]  # Show top 15 for better visibility
+        driver_chart_data = []
+        for pos, (driver, points) in enumerate(top_drivers, 1):
+            team = next(d['team'] for d in drivers if d['driver'] == driver)
+            wins = st.session_state.driver_wins[driver]
+            podiums = st.session_state.driver_podiums[driver]
+            driver_chart_data.append({
+                "Driver": f"{driver}",
+                "Full_Name": f"P{pos} - {driver} ({team})",
+                "Points": points,
+                "Team": team,
+                "Wins": wins,
+                "Podiums": podiums,
+                "Position": pos,
+                "Championship_Gap": sorted_driver_standings[0][1] - points
+            })
+        
+        if driver_chart_data:
+            driver_df_chart = pd.DataFrame(driver_chart_data)
             
-            # Top 10 drivers bar chart with enhanced styling
-            top_10_drivers = sorted_driver_standings[:20]
-            driver_chart_data = []
-            for pos, (driver, points) in enumerate(top_10_drivers, 1):
-                team = next(d['team'] for d in drivers if d['driver'] == driver)
-                wins = st.session_state.driver_wins[driver]
-                podiums = st.session_state.driver_podiums[driver]
-                driver_chart_data.append({
-                    "Driver": f"{pos}. {driver}",
-                    "Points": points,
-                    "Team": team,
-                    "Wins": wins,
-                    "Podiums": podiums,
-                    "Position": pos
-                })
+            # Create enhanced horizontal bar chart
+            fig = px.bar(
+                driver_df_chart,
+                x="Points",
+                y="Full_Name",
+                color="Team",
+                text="Points",
+                color_discrete_map=team_colors,
+                orientation='h',
+                title="Championship Standings - Points Battle",
+                hover_data={
+                    'Wins': True,
+                    'Podiums': True, 
+                    'Championship_Gap': True,
+                    'Team': True,
+                    'Points': True
+                }
+            )
             
-            if driver_chart_data:
-                driver_df_chart = pd.DataFrame(driver_chart_data)
-                fig = px.bar(
-                    driver_df_chart,
-                    x="Points",
-                    y="Driver",
-                    color="Team",
-                    text="Points",
-                    color_discrete_map=team_colors,
-                    orientation='h',
-                    title="Championship Standings"
+            # Enhanced styling with better layout - DEFAULT FONT
+            fig.update_traces(
+                textposition="outside", 
+                texttemplate="%{text} pts",
+                marker_line_width=3,
+                marker_line_color="rgba(0,0,0,0.4)",
+                textfont=dict(size=12, color="black"),
+                hovertemplate="%{customdata[1]}<br>" +
+                              "Points: %{x}<br>" +
+                              "Team: %{customdata[3]}<br>" +
+                              "Wins: %{customdata[0]}<br>" +
+                              "Podiums: %{customdata[1]}<br>" +
+                              "Gap to Leader: %{customdata[2]} pts<br>" +
+                              "<extra></extra>",
+                customdata=driver_df_chart[['Wins', 'Podiums', 'Championship_Gap', 'Team']].values
+            )
+            
+            # Enhanced layout with better proportions and styling - DEFAULT FONT
+            fig.update_layout(
+                height=650,  # Increased height for better visibility
+                width=None,   # Let it use full container width
+                xaxis_title="Championship Points",
+                yaxis_title="",
+                title={
+                    'text': "Championship Standings - Points Battle",
+                    'x': 0.5,
+                    'xanchor': 'center',
+                    'font': {'size': 18, 'color': '#2c3e50'}
+                },
+                plot_bgcolor='rgba(248, 249, 250, 0.95)',
+                paper_bgcolor='rgba(248, 249, 250, 0.95)',
+                xaxis=dict(
+                    gridcolor='rgba(128, 128, 128, 0.2)',
+                    gridwidth=1,
+                    showgrid=True,
+                    zeroline=True,
+                    zerolinecolor='rgba(128, 128, 128, 0.4)',
+                    zerolinewidth=2,
+                    tickfont=dict(size=11, color='#2c3e50'),
+                    title_font=dict(size=14, color='#2c3e50')
+                ),
+                yaxis=dict(
+                    categoryorder='total ascending',
+                    tickfont=dict(size=11, color='#2c3e50'),
+                    showgrid=False
+                ),
+                margin=dict(l=20, r=60, t=60, b=40),
+                showlegend=False
+            )
+            
+            # Add subtle animations and interactions
+            fig.update_traces(
+                marker=dict(
+                    line=dict(width=2),
+                    opacity=0.85
                 )
-                
-                # Enhanced styling
-                fig.update_traces(
-                    textposition="outside", 
-                    texttemplate="%{text} pts",
-                    marker_line_width=2,
-                    marker_line_color="rgba(0,0,0,0.3)"
+            )
+            
+            st.plotly_chart(fig, use_container_width=True, config={
+                'displayModeBar': True,
+                'displaylogo': False,
+                'modeBarButtonsToRemove': ['pan2d', 'lasso2d', 'select2d'],
+                'toImageButtonOptions': {
+                    'format': 'png',
+                    'filename': 'championship_standings',
+                    'height': 650,
+                    'width': 1200,
+                    'scale': 1
+                }
+            })
+            
+            # Quick Stats Panel - Enhanced
+            st.markdown("---")
+            stats_col1, stats_col2, stats_col3, stats_col4 = st.columns(4)
+            
+            with stats_col1:
+                total_points = sum(st.session_state.total_driver_points.values())
+                st.metric(
+                    "🏆 Total Points", 
+                    total_points,
+                    help="Total championship points awarded across all races"
                 )
-                fig.update_layout(
-                    height=500,
-                    width=800,
-                    xaxis_title="Championship Points",
-                    yaxis_title="",
-                    legend_title="Constructor",
-                    font=dict(size=11, color="#000000"),
-                    plot_bgcolor='rgba(240, 242, 246, 0.95)',
-                    paper_bgcolor='rgba(240, 242, 246, 0.95)',
-                    title_font_size=16,
-                    xaxis=dict(gridcolor='rgba(128, 128, 128, 0.3)'),
-                    yaxis=dict(categoryorder='total ascending')
+            
+            with stats_col2:
+                total_winners = len([d for d in st.session_state.driver_wins.values() if d > 0])
+                st.metric(
+                    "🏁 Race Winners", 
+                    total_winners,
+                    help="Number of different drivers who have won races"
                 )
-                st.plotly_chart(fig, use_container_width=True)
             
-        with col2:
-            st.markdown("#### 🎯 Quick Stats")
+            with stats_col3:
+                leader_dominance = (sorted_driver_standings[0][1] / total_points * 100) if total_points > 0 else 0
+                st.metric(
+                    "👑 Leader Share", 
+                    f"{leader_dominance:.1f}%",
+                    help="Percentage of total points held by championship leader"
+                )
             
-            # Championship statistics
-            total_points = sum(st.session_state.total_driver_points.values())
-            total_winners = len([d for d in st.session_state.driver_wins.values() if d > 0])
-            leader_dominance = (sorted_driver_standings[0][1] / total_points * 100) if total_points > 0 else 0
-            
-            st.metric("🏆 Total Points Awarded", total_points)
-            st.metric("🏁 Race Winners", total_winners)
-            st.metric("👑 Leader Dominance", f"{leader_dominance:.1f}%")
+            with stats_col4:
+                avg_points_per_race = total_points / st.session_state.races_completed if st.session_state.races_completed > 0 else 0
+                st.metric(
+                    "📊 Avg/Race", 
+                    f"{avg_points_per_race:.1f}",
+                    help="Average points awarded per race"
+                )
         
         st.markdown("---")
         
@@ -2695,3 +2776,4 @@ with tab6:
 # Breakthrough Driver (Red-Orange) - First unique winner
 # Team Harmony (Orange) - Most balanced teammate performance
 # Championship Contender (Purple) - Top championship potential
+
