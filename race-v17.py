@@ -736,7 +736,7 @@ with tab2:
             podiums = st.session_state.driver_podiums[driver]
             driver_chart_data.append({
                 "Driver": f"{driver}",
-                "Full_Name": f"P{pos} - {driver} ({team})",
+                "Full_Name": f"P{pos} - {driver}",
                 "Points": points,
                 "Team": team,
                 "Wins": wins,
@@ -2776,4 +2776,5 @@ with tab6:
 # Breakthrough Driver (Red-Orange) - First unique winner
 # Team Harmony (Orange) - Most balanced teammate performance
 # Championship Contender (Purple) - Top championship potential
+
 
